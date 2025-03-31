@@ -1,0 +1,1 @@
+print("Aplikacja z grami – uruchomiona!")
