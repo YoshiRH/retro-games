@@ -78,6 +78,7 @@ def show_menu():
     create_game_box(canvas, 320, 210, "Snake", "media/snakePreview.png", show_snake)
     create_game_box(canvas, 540, 210, "Pong", "media/pongPreview.png", show_pong)
 
+    
 def show_snake():
     for widget in root.winfo_children():
         widget.destroy()
