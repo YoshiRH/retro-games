@@ -78,6 +78,16 @@ def show_menu():
     create_game_box(canvas, 320, 210, "Snake", "media/snakePreview.png", show_snake)
     create_game_box(canvas, 540, 210, "Pong", "media/pongPreview.png", show_pong)
 
+    # Exit button
+    exit_button_image = tk.PhotoImage(file="media/exitButton.png")
+    exit_button_id = canvas.create_image(app_center_x, 500, image=exit_button_image, tags="exit_button")
+
+    if not hasattr(canvas, 'images'):
+        canvas.images = []
+    canvas.images.append(exit_button_image)
+
+    canvas.tag_bind("exit_button", "<Button-1>", lambda event: root.quit())
+    
 def show_snake():
     for widget in root.winfo_children():
         widget.destroy()
