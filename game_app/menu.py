@@ -80,14 +80,20 @@ def show_menu():
 
     # Exit button
     exit_button_image = tk.PhotoImage(file="media/exitButton.png")
+    exit_button_image_hover = tk.PhotoImage(file="media/exitButtonHover.png")
+
     exit_button_id = canvas.create_image(app_center_x, 500, image=exit_button_image, tags="exit_button")
 
     if not hasattr(canvas, 'images'):
         canvas.images = []
     canvas.images.append(exit_button_image)
+    canvas.images.append(exit_button_image_hover)
 
     canvas.tag_bind("exit_button", "<Button-1>", lambda event: root.quit())
-    
+    canvas.tag_bind("exit_button", "<Enter>",
+                    lambda event: canvas.itemconfig(exit_button_id, image=exit_button_image_hover))
+    canvas.tag_bind("exit_button", "<Leave>", lambda event: canvas.itemconfig(exit_button_id, image=exit_button_image))
+
 def show_snake():
     for widget in root.winfo_children():
         widget.destroy()
