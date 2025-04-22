@@ -10,6 +10,7 @@ game_board_y = 145
 class Snake:
     def __init__(self):
         self.body = [Vector2(3,6),Vector2(4,6),Vector2(5,6)]
+        self.direction = Vector2(1,0)
 
     def draw(self, screen):
         for coordinates in self.body:
@@ -17,6 +18,10 @@ class Snake:
                             game_board_y + (coordinates.y * game_board_element_size)
                             , game_board_element_size, game_board_element_size)
             pygame.draw.rect(screen, "#305CDE", snake_body_part)
+
+    def move(self):
+        self.body.pop()
+        self.body.insert(0, self.body[0] + self.direction)
 
 class Apple:
     def __init__(self):
@@ -46,6 +51,9 @@ def main(root):
     apple = Apple()
     snake = Snake()
 
+    SCREEN_UPDATE = pygame.USEREVENT
+    pygame.time.set_timer(SCREEN_UPDATE, 120)
+
     #Main game loop
     running = True
     while running:
@@ -53,8 +61,19 @@ def main(root):
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    running = False
+                match event.key:
+                    case pygame.K_ESCAPE:
+                        running = False
+                    case pygame.K_w:
+                        snake.direction = Vector2(0,-1)
+                    case pygame.K_s:
+                        snake.direction = Vector2(0, 1)
+                    case pygame.K_d:
+                        snake.direction = Vector2(1, 0)
+                    case pygame.K_a:
+                        snake.direction = Vector2(-1, 0)
+            if event.type == SCREEN_UPDATE:
+                snake.move()
 
         screen.fill("#89ac46")
         pygame.draw.rect(screen, "#4d6127", game_board_border)
