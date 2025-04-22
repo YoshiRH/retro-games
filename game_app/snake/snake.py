@@ -1,19 +1,37 @@
-import pygame
-import os
+import pygame, os, random
+
+game_board_element_size = 35
+game_board_grid_size_x = 21
+game_board_grid_size_y = 12
+game_board_x = 34
+game_board_y = 145
+
+class Apple:
+    def __init__(self):
+        self.x = random.randint(0, game_board_grid_size_x - 1)
+        self.y = random.randint(0, game_board_grid_size_y - 1)
+
+    def draw(self, screen):
+        apple = pygame.Rect(game_board_x + (self.x * game_board_element_size),
+                            game_board_y + (self.y * game_board_element_size)
+                            , game_board_element_size, game_board_element_size)
+        pygame.draw.rect(screen, "#C7372F", apple)
 
 def main(root):
 
-    #Initialize game and embed it in the Tkinter Window
+    #Initialization and embed inside the Tkinter Window
     pygame.init()
     os.environ['SDL_WINDOWID'] = str(root.winfo_id())
     pygame.display.init()
     screen = pygame.display.set_mode((800,600))
     clock = pygame.time.Clock()
 
-    grid_box_size = 35
-
+    #Game objects
     game_board_border = pygame.Rect(0,112,800,488)
-    game_board = pygame.Rect(34, 145, (21 * grid_box_size), (12 * grid_box_size))
+    game_board = pygame.Rect(game_board_x, game_board_y,
+                             (game_board_grid_size_x * game_board_element_size),
+                             (game_board_grid_size_y * game_board_element_size))
+    apple = Apple()
 
     #Main game loop
     running = True
@@ -28,6 +46,7 @@ def main(root):
         screen.fill("#89ac46")
         pygame.draw.rect(screen, "#4d6127", game_board_border)
         pygame.draw.rect(screen, "#d3e671", game_board)
+        apple.draw(screen)
 
         pygame.display.update()
         clock.tick(60)
