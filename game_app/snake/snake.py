@@ -1,10 +1,22 @@
 import pygame, os, random
+from pygame.math import Vector2
 
 game_board_element_size = 35
 game_board_grid_size_x = 21
 game_board_grid_size_y = 12
 game_board_x = 34
 game_board_y = 145
+
+class Snake:
+    def __init__(self):
+        self.body = [Vector2(3,6),Vector2(4,6),Vector2(5,6)]
+
+    def draw(self, screen):
+        for coordinates in self.body:
+            snake_body_part = pygame.Rect(game_board_x + (coordinates.x * game_board_element_size),
+                            game_board_y + (coordinates.y * game_board_element_size)
+                            , game_board_element_size, game_board_element_size)
+            pygame.draw.rect(screen, "#305CDE", snake_body_part)
 
 class Apple:
     def __init__(self):
@@ -32,6 +44,7 @@ def main(root):
                              (game_board_grid_size_x * game_board_element_size),
                              (game_board_grid_size_y * game_board_element_size))
     apple = Apple()
+    snake = Snake()
 
     #Main game loop
     running = True
@@ -47,6 +60,7 @@ def main(root):
         pygame.draw.rect(screen, "#4d6127", game_board_border)
         pygame.draw.rect(screen, "#d3e671", game_board)
         apple.draw(screen)
+        snake.draw(screen)
 
         pygame.display.update()
         clock.tick(60)
