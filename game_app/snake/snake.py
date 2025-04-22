@@ -11,15 +11,19 @@ def main(root):
     clock = pygame.time.Clock()
 
     #Main game loop
-    while True:
+    running = True
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-
+                running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
         screen.fill("#D3E671")
 
         pygame.display.update()
         clock.tick(60)
+    pygame.quit()
 
 if __name__ == "__main__":
     main()

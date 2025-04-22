@@ -99,6 +99,7 @@ def show_snake():
         widget.destroy()
 
     start_snake(root)
+    show_menu()
 
 def show_tetris():
     for widget in root.winfo_children():
