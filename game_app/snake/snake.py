@@ -65,13 +65,17 @@ def main(root):
                     case pygame.K_ESCAPE:
                         running = False
                     case pygame.K_w:
-                        snake.direction = Vector2(0,-1)
+                        if snake.direction != Vector2(0, 1):
+                            snake.direction = Vector2(0,-1)
                     case pygame.K_s:
-                        snake.direction = Vector2(0, 1)
+                        if snake.direction != Vector2(0, -1):
+                            snake.direction = Vector2(0, 1)
                     case pygame.K_d:
-                        snake.direction = Vector2(1, 0)
+                        if snake.direction != Vector2(-1, 0):
+                            snake.direction = Vector2(1, 0)
                     case pygame.K_a:
-                        snake.direction = Vector2(-1, 0)
+                        if snake.direction != Vector2(1, 0):
+                            snake.direction = Vector2(-1, 0)
             if event.type == SCREEN_UPDATE:
                 snake.move()
 
