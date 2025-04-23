@@ -9,7 +9,7 @@ game_board_y = 145
 
 class Snake:
     def __init__(self):
-        self.body = [Vector2(3,6),Vector2(4,6),Vector2(5,6)]
+        self.body = [Vector2(5,6),Vector2(4,6),Vector2(3,6)]
         self.direction = Vector2(1,0)
         self.grow = False
 
@@ -46,8 +46,10 @@ class Game:
     def __init__(self):
         self.apple = Apple()
         self.snake = Snake()
+        self.Fail = False
 
     def update_logic(self):
+        self.check_self_collision()
         self.try_eating_apple()
         self.snake.move()
 
@@ -59,6 +61,13 @@ class Game:
         if self.apple.position == self.snake.body[0]:
             self.snake.grow = True
             self.apple.reposition()
+
+    def check_self_collision(self):
+        upcoming_position = self.snake.body[0] + self.snake.direction
+        for coordinates in self.snake.body:
+            if upcoming_position == coordinates:
+                self.Fail = True
+                print("Self collision")
 
 def main(root):
 
