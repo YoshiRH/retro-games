@@ -11,6 +11,7 @@ class Snake:
     def __init__(self):
         self.body = [Vector2(3,6),Vector2(4,6),Vector2(5,6)]
         self.direction = Vector2(1,0)
+        self.grow = False
 
     def draw(self, screen):
         for coordinates in self.body:
@@ -20,7 +21,10 @@ class Snake:
             pygame.draw.rect(screen, "#305CDE", snake_body_part)
 
     def move(self):
-        self.body.pop()
+        if self.grow:
+            self.grow = False
+        else:
+            self.body.pop()
         self.body.insert(0, self.body[0] + self.direction)
 
 class Apple:
@@ -33,6 +37,10 @@ class Apple:
                             game_board_y + (self.position.y * game_board_element_size)
                             , game_board_element_size, game_board_element_size)
         pygame.draw.rect(screen, "#C7372F", apple)
+
+    def reposition(self):
+        self.position = Vector2(random.randint(0, game_board_grid_size_x - 1),
+                                random.randint(0, game_board_grid_size_y - 1))
 
 def main(root):
 
@@ -78,6 +86,11 @@ def main(root):
                             snake.direction = Vector2(-1, 0)
             if event.type == SCREEN_UPDATE:
                 snake.move()
+
+        #Eating apple
+        if apple.position == snake.body[0]:
+            snake.grow = True
+            apple.reposition()
 
         screen.fill("#89ac46")
         pygame.draw.rect(screen, "#4d6127", game_board_border)
