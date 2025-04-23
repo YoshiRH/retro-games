@@ -157,6 +157,8 @@ def main(root):
                 match event.key:
                     case pygame.K_ESCAPE:
                         running = False
+                    case pygame.K_r:
+                        game = Game()
                     case pygame.K_w:
                         if game.snake.direction != Vector2(0, 1):
                             game.snake.direction = Vector2(0,-1)
