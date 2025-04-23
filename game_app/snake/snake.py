@@ -115,6 +115,7 @@ class Game:
     def draw_objects(self, screen):
         self.apple.draw(screen)
         self.snake.draw(screen)
+        self.draw_score(screen)
 
     def try_eating_apple(self):
         if self.apple.position == self.snake.body[0]:
@@ -133,6 +134,16 @@ class Game:
             self.Fail = True
         if upcoming_position.y < 0 or upcoming_position.y > game_board_grid_size_y - 1:
             self.Fail = True
+
+    def draw_score(self, screen):
+        score_border = pygame.Rect(314, 14, 169, 84)
+        font = pygame.font.Font('media/snake/VT323-Regular.ttf', 110)
+        score = str(len(self.snake.body) - 3)
+        score_rectangle = pygame.Rect(330, 0, 174, 70)
+        score_surface = font.render(score, True, '#d3e671')
+
+        pygame.draw.rect(screen, "#4d6127", score_border)
+        screen.blit(score_surface, score_rectangle)
 
 def main(root):
 
