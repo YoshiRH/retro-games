@@ -25,12 +25,12 @@ class Snake:
 
 class Apple:
     def __init__(self):
-        self.x = random.randint(0, game_board_grid_size_x - 1)
-        self.y = random.randint(0, game_board_grid_size_y - 1)
+        self.position = Vector2(random.randint(0, game_board_grid_size_x - 1),
+                                random.randint(0, game_board_grid_size_y - 1))
 
     def draw(self, screen):
-        apple = pygame.Rect(game_board_x + (self.x * game_board_element_size),
-                            game_board_y + (self.y * game_board_element_size)
+        apple = pygame.Rect(game_board_x + (self.position.x * game_board_element_size),
+                            game_board_y + (self.position.y * game_board_element_size)
                             , game_board_element_size, game_board_element_size)
         pygame.draw.rect(screen, "#C7372F", apple)
 
