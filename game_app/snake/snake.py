@@ -108,6 +108,7 @@ class Game:
         self.hit_sound.set_volume(0.40)
         self.eat_sound = pygame.mixer.Sound('media/snake/eat.wav')
         self.eat_sound.set_volume(0.40)
+        self.end_pop_up = pygame.image.load('media/snake/endPopUp.png').convert_alpha()
 
     def update_logic(self):
         if self.running:
@@ -121,6 +122,8 @@ class Game:
         self.apple.draw(screen)
         self.snake.draw(screen)
         self.draw_score(screen)
+        if not self.running:
+            self.draw_end_screen(screen)
 
     def try_eating_apple(self):
         if self.apple.position == self.snake.body[0]:
@@ -154,6 +157,10 @@ class Game:
 
         pygame.draw.rect(screen, "#4d6127", score_border)
         screen.blit(score_surface, score_rectangle)
+
+    def draw_end_screen(self, screen):
+        rectangle = pygame.Rect(139, 180, 525, 350)
+        screen.blit(self.end_pop_up, rectangle)
 
 def main(root):
 
