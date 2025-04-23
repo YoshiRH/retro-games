@@ -106,6 +106,8 @@ class Game:
         self.running = True
         self.hit_sound = pygame.mixer.Sound('media/snake/hit.wav')
         self.hit_sound.set_volume(0.40)
+        self.eat_sound = pygame.mixer.Sound('media/snake/eat.wav')
+        self.eat_sound.set_volume(0.40)
 
     def update_logic(self):
         if self.running:
@@ -123,6 +125,7 @@ class Game:
     def try_eating_apple(self):
         if self.apple.position == self.snake.body[0]:
             self.snake.grow = True
+            self.eat_sound.play()
             self.apple.reposition()
 
     def check_self_collision(self):
