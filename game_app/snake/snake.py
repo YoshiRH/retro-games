@@ -12,13 +12,69 @@ class Snake:
         self.body = [Vector2(5,6),Vector2(4,6),Vector2(3,6)]
         self.direction = Vector2(1,0)
         self.grow = False
+        self.body_sprite = pygame.image.load('media/snake/body.png').convert_alpha()
+        self.head_sprite = pygame.image.load('media/snake/head.png').convert_alpha()
+        self.tail_sprite = pygame.image.load('media/snake/tail.png').convert_alpha()
+        self.turn_sprite = pygame.image.load('media/snake/turn.png').convert_alpha()
 
     def draw(self, screen):
-        for coordinates in self.body:
-            snake_body_part = pygame.Rect(game_board_x + (coordinates.x * game_board_element_size),
-                            game_board_y + (coordinates.y * game_board_element_size)
-                            , game_board_element_size, game_board_element_size)
-            pygame.draw.rect(screen, "#305CDE", snake_body_part)
+        for index, coordinates in enumerate(self.body):
+            rectangle = pygame.Rect(game_board_x + (coordinates.x * game_board_element_size),
+                                game_board_y + (coordinates.y * game_board_element_size)
+                                , game_board_element_size, game_board_element_size)
+            sprite = None
+            if index == 0:
+                sprite = self.rotate_head()
+                screen.blit(sprite, rectangle)
+            elif index == len(self.body) - 1:
+                sprite = self.rotate_tail()
+                screen.blit(sprite, rectangle)
+            else:
+                previous_difference = self.body[index + 1] - self.body[index]
+                next_difference = self.body[index - 1] - self.body[index]
+                if previous_difference.x == next_difference.x:
+                    sprite = self.body_sprite
+                elif previous_difference.y == next_difference.y:
+                    sprite = pygame.transform.rotate(self.body_sprite, 90)
+                else:
+                    if (previous_difference.x == 1 and next_difference.y == -1 or
+                            previous_difference.y == -1 and next_difference.x == 1):
+                        sprite = pygame.transform.rotate(self.turn_sprite, 0)
+                    elif (previous_difference.x == -1 and next_difference.y == -1 or
+                          previous_difference.y == -1 and next_difference.x == -1):
+                        sprite = pygame.transform.rotate(self.turn_sprite, 90)
+                    elif (previous_difference.x == -1 and next_difference.y == 1 or
+                          previous_difference.y == 1 and next_difference.x == -1):
+                        sprite = pygame.transform.rotate(self.turn_sprite, 180)
+                    elif (previous_difference.x == 1 and next_difference.y == 1 or
+                          previous_difference.y == 1 and next_difference.x == 1):
+                        sprite = pygame.transform.rotate(self.turn_sprite, 270)
+            if sprite is not None:
+                screen.blit(sprite, rectangle)
+            else:
+                pygame.draw.rect(screen, "#F8ED8C", rectangle)
+
+    def rotate_head(self):
+        rotation = self.body[1] - self.body[0]
+        if rotation == Vector2(0,1):
+            return self.head_sprite
+        elif rotation == Vector2(1,0):
+            return pygame.transform.rotate(self.head_sprite, 90)
+        elif rotation == Vector2(0,-1):
+            return pygame.transform.rotate(self.head_sprite, 180)
+        elif rotation == Vector2(-1,0):
+            return pygame.transform.rotate(self.head_sprite, 270)
+
+    def rotate_tail(self):
+        rotation = self.body[-2] - self.body[-1]
+        if rotation == Vector2(0,1):
+            return self.tail_sprite
+        elif rotation == Vector2(1,0):
+            return pygame.transform.rotate(self.tail_sprite, 90)
+        elif rotation == Vector2(0,-1):
+            return pygame.transform.rotate(self.tail_sprite, 180)
+        elif rotation == Vector2(-1,0):
+            return pygame.transform.rotate(self.tail_sprite, 270)
 
     def move(self):
         if self.grow:
