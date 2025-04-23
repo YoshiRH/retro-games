@@ -51,8 +51,9 @@ class Game:
     def update_logic(self):
         self.check_self_collision()
         self.check_border_collision()
-        self.try_eating_apple()
-        self.snake.move()
+        if not self.Fail:
+            self.try_eating_apple()
+            self.snake.move()
 
     def draw_objects(self, screen):
         self.apple.draw(screen)
@@ -68,16 +69,13 @@ class Game:
         for coordinates in self.snake.body:
             if upcoming_position == coordinates:
                 self.Fail = True
-                print("Self collision")
 
     def check_border_collision(self):
         upcoming_position = self.snake.body[0] + self.snake.direction
         if upcoming_position.x < 0 or upcoming_position.x > game_board_grid_size_x - 1:
             self.Fail = True
-            print("Border collision")
         if upcoming_position.y < 0 or upcoming_position.y > game_board_grid_size_y - 1:
             self.Fail = True
-            print("Border collision")
 
 def main(root):
 
