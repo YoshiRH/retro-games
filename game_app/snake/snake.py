@@ -95,9 +95,12 @@ class Apple:
         image = pygame.image.load('media/snake/apple.png').convert_alpha()
         screen.blit(image,rectangle)
 
-    def reposition(self):
+    def reposition(self, snake):
         self.position = Vector2(random.randint(0, game_board_grid_size_x - 1),
                                 random.randint(0, game_board_grid_size_y - 1))
+        for coordinates in snake.body:
+            if coordinates == self.position:
+                self.reposition(snake)
 
 class Game:
     def __init__(self):
@@ -129,7 +132,7 @@ class Game:
         if self.apple.position == self.snake.body[0]:
             self.snake.grow = True
             self.eat_sound.play()
-            self.apple.reposition()
+            self.apple.reposition(self.snake)
 
     def check_self_collision(self):
         upcoming_position = self.snake.body[0] + self.snake.direction
