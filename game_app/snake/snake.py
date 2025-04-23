@@ -142,12 +142,6 @@ def main(root):
     pygame.display.init()
     screen = pygame.display.set_mode((800,600))
     clock = pygame.time.Clock()
-
-    #Game objects
-    game_board_border = pygame.Rect(0,112,800,488)
-    game_board = pygame.Rect(game_board_x, game_board_y,
-                             (game_board_grid_size_x * game_board_element_size),
-                             (game_board_grid_size_y * game_board_element_size))
     game = Game()
 
     SCREEN_UPDATE = pygame.USEREVENT
@@ -179,13 +173,34 @@ def main(root):
                 game.update_logic()
 
         screen.fill("#89ac46")
-        pygame.draw.rect(screen, "#4d6127", game_board_border)
-        pygame.draw.rect(screen, "#d3e671", game_board)
+        draw_game_board(screen)
         game.draw_objects(screen)
 
         pygame.display.update()
         clock.tick(60)
     pygame.quit()
+
+def draw_game_board(screen):
+    game_board_border = pygame.Rect(0, 112, 800, 488)
+    game_board = pygame.Rect(game_board_x, game_board_y,
+                             (game_board_grid_size_x * game_board_element_size),
+                             (game_board_grid_size_y * game_board_element_size))
+    pygame.draw.rect(screen, "#4d6127", game_board_border)
+    pygame.draw.rect(screen, "#d3e671", game_board)
+    for y in range (game_board_grid_size_y):
+        for x in range(game_board_grid_size_x):
+            if y % 2 == 0:
+                if x % 2 == 0:
+                    rectangle = pygame.Rect(game_board_x + (x * game_board_element_size),
+                                            game_board_y + (y * game_board_element_size)
+                                            , game_board_element_size, game_board_element_size)
+                    pygame.draw.rect(screen, "#89AC46", rectangle)
+            else:
+                if x % 2 == 1:
+                    rectangle = pygame.Rect(game_board_x + (x * game_board_element_size),
+                                            game_board_y + (y * game_board_element_size)
+                                            , game_board_element_size, game_board_element_size)
+                    pygame.draw.rect(screen, "#89AC46", rectangle)
 
 if __name__ == "__main__":
     main()
