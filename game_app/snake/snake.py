@@ -42,6 +42,24 @@ class Apple:
         self.position = Vector2(random.randint(0, game_board_grid_size_x - 1),
                                 random.randint(0, game_board_grid_size_y - 1))
 
+class Game:
+    def __init__(self):
+        self.apple = Apple()
+        self.snake = Snake()
+
+    def update_logic(self):
+        self.try_eating_apple()
+        self.snake.move()
+
+    def draw_objects(self, screen):
+        self.apple.draw(screen)
+        self.snake.draw(screen)
+
+    def try_eating_apple(self):
+        if self.apple.position == self.snake.body[0]:
+            self.snake.grow = True
+            self.apple.reposition()
+
 def main(root):
 
     #Initialization and embed inside the Tkinter Window
@@ -56,8 +74,7 @@ def main(root):
     game_board = pygame.Rect(game_board_x, game_board_y,
                              (game_board_grid_size_x * game_board_element_size),
                              (game_board_grid_size_y * game_board_element_size))
-    apple = Apple()
-    snake = Snake()
+    game = Game()
 
     SCREEN_UPDATE = pygame.USEREVENT
     pygame.time.set_timer(SCREEN_UPDATE, 120)
@@ -73,30 +90,24 @@ def main(root):
                     case pygame.K_ESCAPE:
                         running = False
                     case pygame.K_w:
-                        if snake.direction != Vector2(0, 1):
-                            snake.direction = Vector2(0,-1)
+                        if game.snake.direction != Vector2(0, 1):
+                            game.snake.direction = Vector2(0,-1)
                     case pygame.K_s:
-                        if snake.direction != Vector2(0, -1):
-                            snake.direction = Vector2(0, 1)
+                        if game.snake.direction != Vector2(0, -1):
+                            game.snake.direction = Vector2(0, 1)
                     case pygame.K_d:
-                        if snake.direction != Vector2(-1, 0):
-                            snake.direction = Vector2(1, 0)
+                        if game.snake.direction != Vector2(-1, 0):
+                            game.snake.direction = Vector2(1, 0)
                     case pygame.K_a:
-                        if snake.direction != Vector2(1, 0):
-                            snake.direction = Vector2(-1, 0)
+                        if game.snake.direction != Vector2(1, 0):
+                            game.snake.direction = Vector2(-1, 0)
             if event.type == SCREEN_UPDATE:
-                snake.move()
-
-        #Eating apple
-        if apple.position == snake.body[0]:
-            snake.grow = True
-            apple.reposition()
+                game.update_logic()
 
         screen.fill("#89ac46")
         pygame.draw.rect(screen, "#4d6127", game_board_border)
         pygame.draw.rect(screen, "#d3e671", game_board)
-        apple.draw(screen)
-        snake.draw(screen)
+        game.draw_objects(screen)
 
         pygame.display.update()
         clock.tick(60)
