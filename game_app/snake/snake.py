@@ -103,14 +103,15 @@ class Game:
     def __init__(self):
         self.apple = Apple()
         self.snake = Snake()
-        self.Fail = False
+        self.running = True
 
     def update_logic(self):
-        self.check_self_collision()
-        self.check_border_collision()
-        if not self.Fail:
+        if self.running:
+            self.check_self_collision()
+            self.check_border_collision()
             self.try_eating_apple()
-            self.snake.move()
+            if self.running:
+                self.snake.move()
 
     def draw_objects(self, screen):
         self.apple.draw(screen)
@@ -126,14 +127,17 @@ class Game:
         upcoming_position = self.snake.body[0] + self.snake.direction
         for coordinates in self.snake.body:
             if upcoming_position == coordinates:
-                self.Fail = True
+                self.fail()
 
     def check_border_collision(self):
         upcoming_position = self.snake.body[0] + self.snake.direction
         if upcoming_position.x < 0 or upcoming_position.x > game_board_grid_size_x - 1:
-            self.Fail = True
+            self.fail()
         if upcoming_position.y < 0 or upcoming_position.y > game_board_grid_size_y - 1:
-            self.Fail = True
+            self.fail()
+
+    def fail(self):
+        self.running = False
 
     def draw_score(self, screen):
         score_border = pygame.Rect(314, 14, 169, 84)
