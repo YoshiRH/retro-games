@@ -33,10 +33,11 @@ class Apple:
                                 random.randint(0, game_board_grid_size_y - 1))
 
     def draw(self, screen):
-        apple = pygame.Rect(game_board_x + (self.position.x * game_board_element_size),
+        rectangle = pygame.Rect(game_board_x + (self.position.x * game_board_element_size),
                             game_board_y + (self.position.y * game_board_element_size)
                             , game_board_element_size, game_board_element_size)
-        pygame.draw.rect(screen, "#C7372F", apple)
+        image = pygame.image.load('media/snake/apple.png').convert_alpha()
+        screen.blit(image,rectangle)
 
     def reposition(self):
         self.position = Vector2(random.randint(0, game_board_grid_size_x - 1),
