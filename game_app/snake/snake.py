@@ -104,6 +104,8 @@ class Game:
         self.apple = Apple()
         self.snake = Snake()
         self.running = True
+        self.hit_sound = pygame.mixer.Sound('media/snake/hit.wav')
+        self.hit_sound.set_volume(0.40)
 
     def update_logic(self):
         if self.running:
@@ -138,6 +140,7 @@ class Game:
 
     def fail(self):
         self.running = False
+        self.hit_sound.play()
 
     def draw_score(self, screen):
         score_border = pygame.Rect(314, 14, 169, 84)
