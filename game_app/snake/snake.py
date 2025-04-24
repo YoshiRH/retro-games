@@ -17,6 +17,10 @@ class Snake:
         self.tail_sprite = pygame.image.load('media/snake/tail.png').convert_alpha()
         self.turn_sprite = pygame.image.load('media/snake/turn.png').convert_alpha()
 
+    def try_change_direction(self, new_direction):
+        if not self.body[0] + new_direction == self.body[1]:
+            self.direction = new_direction
+
     def draw(self, screen):
         for index, coordinates in enumerate(self.body):
             rectangle = pygame.Rect(game_board_x + (coordinates.x * game_board_element_size),
@@ -191,17 +195,13 @@ def main(root):
                     case pygame.K_r:
                         game = Game()
                     case pygame.K_w:
-                        if game.snake.direction != Vector2(0, 1):
-                            game.snake.direction = Vector2(0,-1)
+                        game.snake.try_change_direction(Vector2(0,-1))
                     case pygame.K_s:
-                        if game.snake.direction != Vector2(0, -1):
-                            game.snake.direction = Vector2(0, 1)
+                        game.snake.try_change_direction(Vector2(0, 1))
                     case pygame.K_d:
-                        if game.snake.direction != Vector2(-1, 0):
-                            game.snake.direction = Vector2(1, 0)
+                        game.snake.try_change_direction(Vector2(1, 0))
                     case pygame.K_a:
-                        if game.snake.direction != Vector2(1, 0):
-                            game.snake.direction = Vector2(-1, 0)
+                        game.snake.try_change_direction(Vector2(-1, 0))
             if event.type == SCREEN_UPDATE:
                 game.update_logic()
 
