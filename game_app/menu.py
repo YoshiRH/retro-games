@@ -52,9 +52,8 @@ def draw_menu_base(canvas):
     # Set image as a background
     canvas.create_image(app_center_x, app_center_y, image=background_image)
 
-    # Game title
-    canvas.create_text(app_center_x, 64, text="Retro Games\nCollections", font=nunito_bold, fill="#361706",
-                       justify="center")
+    # Menu logo
+    canvas.create_image(app_center_x, 66, image=menu_logo_image)
 
     # Choose game label
     line_length = 150
@@ -139,6 +138,8 @@ app_center_x = 400
 app_center_y = 300
 
 background_image = tk.PhotoImage(file="media/menuBackground.png")
+menu_logo_image = tk.PhotoImage(file="media/menuLogo.png")
+
 nunito_bold = font.Font(family="Nunito", size=28, weight="bold")
 nunito_regular = font.Font(family="Nunito", size=18, weight="bold")
 
