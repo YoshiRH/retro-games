@@ -97,13 +97,8 @@ def show_snake():
     for widget in root.winfo_children():
         widget.destroy()
 
-    label = tk.Label(root, text="Gra Snake", font=("Arial", 14))
-    label.pack(pady=10)
-
-    btn_back = tk.Button(root, text="Powrót do menu", command=show_menu, width=20)
-    btn_back.pack(pady=10)
-
-    start_snake()
+    start_snake(root)
+    show_menu()
 
 def show_tetris():
     for widget in root.winfo_children():
