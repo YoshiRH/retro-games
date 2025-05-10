@@ -62,7 +62,6 @@ def draw_menu_base(canvas):
                        justify="center")
     canvas.create_line(700 - line_length, 170, 700, 170, fill="#361706", width=3)
 
-
 def show_menu():
     for widget in root.winfo_children():
         widget.destroy()
@@ -116,13 +115,8 @@ def show_pong():
     for widget in root.winfo_children():
         widget.destroy()
 
-    label = tk.Label(root, text="Gra Pong", font=("Arial", 14))
-    label.pack(pady=10)
-
-    btn_back = tk.Button(root, text="Powrót do menu", command=show_menu, width=20)
-    btn_back.pack(pady=10)
-
-    start_pong()
+    start_pong(root)
+    show_menu()
 
 root = tk.Tk()
 root.title("Retro Games")
