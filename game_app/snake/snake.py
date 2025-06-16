@@ -1,5 +1,6 @@
 import pygame, os, random
 from pygame.math import Vector2
+from .in_game_menu import InGameMenu
 
 game_board_element_size = 35
 game_board_grid_size_x = 21
@@ -178,6 +179,7 @@ def main(root):
     screen = pygame.display.set_mode((800,600))
     clock = pygame.time.Clock()
     game = Game()
+    menu = InGameMenu(screen)
 
     SCREEN_UPDATE = pygame.USEREVENT
     pygame.time.set_timer(SCREEN_UPDATE, 120)
@@ -194,6 +196,8 @@ def main(root):
                         running = False
                     case pygame.K_r:
                         game = Game()
+                    case pygame.K_p:
+                        menu.toggle()
                     case pygame.K_w:
                         game.snake.try_change_direction(Vector2(0,-1))
                     case pygame.K_s:
@@ -202,12 +206,14 @@ def main(root):
                         game.snake.try_change_direction(Vector2(1, 0))
                     case pygame.K_a:
                         game.snake.try_change_direction(Vector2(-1, 0))
-            if event.type == SCREEN_UPDATE:
+            if event.type == SCREEN_UPDATE and not menu.active:
                 game.update_logic()
+        if not menu.active:
+            screen.fill("#89ac46")
+            draw_game_board(screen)
+            game.draw_objects(screen)
 
-        screen.fill("#89ac46")
-        draw_game_board(screen)
-        game.draw_objects(screen)
+        menu.draw()
 
         pygame.display.update()
         clock.tick(60)
