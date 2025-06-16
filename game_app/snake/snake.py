@@ -208,10 +208,10 @@ def main(root):
                         game.snake.try_change_direction(Vector2(-1, 0))
             if event.type == SCREEN_UPDATE and not menu.active:
                 game.update_logic()
-        if not menu.active:
-            screen.fill("#89ac46")
-            draw_game_board(screen)
-            game.draw_objects(screen)
+
+        screen.fill("#89ac46")
+        draw_game_board(screen)
+        game.draw_objects(screen)
 
         menu.draw()
 
