@@ -193,11 +193,9 @@ def main(root):
             if event.type == pygame.KEYDOWN:
                 match event.key:
                     case pygame.K_ESCAPE:
-                        running = False
+                        menu.toggle()
                     case pygame.K_r:
                         game = Game()
-                    case pygame.K_p:
-                        menu.toggle()
                     case pygame.K_w:
                         game.snake.try_change_direction(Vector2(0,-1))
                     case pygame.K_s:
@@ -206,6 +204,10 @@ def main(root):
                         game.snake.try_change_direction(Vector2(1, 0))
                     case pygame.K_a:
                         game.snake.try_change_direction(Vector2(-1, 0))
+            if menu.active:
+                result = menu.handle_event(event)
+                if result == "quit":
+                    running = False
             if event.type == SCREEN_UPDATE and not menu.active:
                 game.update_logic()
 
