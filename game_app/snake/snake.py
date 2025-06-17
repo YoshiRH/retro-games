@@ -210,7 +210,7 @@ def main(root):
                         game.snake.try_change_direction(Vector2(-1, 0))
             if game.menu.active:
                 result = game.menu.handle_event(event)
-                if result in ["quit", "exit"]:
+                if result == "quit":
                     running = False
                 elif result == "continue":
                     game.menu.disable()

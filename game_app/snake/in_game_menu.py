@@ -2,13 +2,13 @@ import pygame
 from enum import Enum
 
 class InGameMenu:
-    def __init__(self, screen, pos_left, post_top, primary_color, secondary_color, highlight_color):
+    def __init__(self, screen, pos_left, pos_top, primary_color, secondary_color, highlight_color):
         self.screen = screen
         self.active = False
         sizes = {"big": 75, "medium": 55, "small": 30}
         self.fonts = {k: pygame.font.Font('media/snake/Jersey25-Regular.ttf', v) for k, v in sizes.items()}
         self.pos_left = pos_left
-        self.pos_top = post_top
+        self.pos_top = pos_top
         self.primary_color = primary_color
         self.secondary_color = secondary_color
         self.highlight_color = highlight_color
@@ -23,13 +23,13 @@ class InGameMenu:
         if not self.active:
             return
 
-        if self.type == MenuType.START:
+        if self.type is MenuType.START:
             self.draw_base("Collect Apples", "Use Arrow or WASD keys to steer", "Start", "Leave")
-        elif self.type == MenuType.PAUSE:
+        elif self.type is MenuType.PAUSE:
             self.draw_base("Game paused", "", "Continue", "Leave")
-        elif self.type == MenuType.WIN:
+        elif self.type is MenuType.WIN:
             self.draw_base("You won!", f"All apples collected :)", "Retry", "Leave")
-        elif self.type == MenuType.LOSS:
+        elif self.type is MenuType.LOSS:
             self.draw_base("You lost!", f"Final Score: {score}", "Retry", "Leave")
 
     def enable_menu(self, menu_type):
@@ -37,34 +37,33 @@ class InGameMenu:
         self.active = True
 
     def draw_base(self, title, additional, left, right):
-        if self.active:
-            overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
-            overlay.fill((50, 50, 50, 180))
-            self.screen.blit(overlay, (0, 0))
+        overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
+        overlay.fill((50, 50, 50, 180))
+        self.screen.blit(overlay, (0, 0))
 
-            border = pygame.Rect(self.pos_left, self.pos_top, 525, 350)
-            pygame.draw.rect(self.screen, self.secondary_color, border)
+        border = pygame.Rect(self.pos_left, self.pos_top, 525, 350)
+        pygame.draw.rect(self.screen, self.secondary_color, border)
 
-            inside = pygame.Rect(self.pos_left + 30, self.pos_top + 30, 465, 290)
-            pygame.draw.rect(self.screen, self.primary_color, inside)
+        inside = pygame.Rect(self.pos_left + 30, self.pos_top + 30, 465, 290)
+        pygame.draw.rect(self.screen, self.primary_color, inside)
 
-            title = self.fonts["big"].render(title, True, (77, 97, 39))
-            title_rect = title.get_rect(center=(self.pos_left + 525 // 2, self.pos_top + 70))
-            self.screen.blit(title, title_rect)
+        title = self.fonts["big"].render(title, True, self.secondary_color)
+        title_rect = title.get_rect(center=(self.pos_left + 525 // 2, self.pos_top + 70))
+        self.screen.blit(title, title_rect)
 
-            additional = self.fonts["small"].render(additional, True, (77, 97, 39))
-            score_rect = additional.get_rect(center=(self.pos_left + 525 // 2, self.pos_top + 140))
-            self.screen.blit(additional, score_rect)
+        additional = self.fonts["small"].render(additional, True, self.secondary_color)
+        score_rect = additional.get_rect(center=(self.pos_left + 525 // 2, self.pos_top + 140))
+        self.screen.blit(additional, score_rect)
 
-            pygame.draw.rect(self.screen, (77, 97, 39), self.left_button_rect)
-            left_text = self.fonts["medium"].render(left, True, (211, 230, 113))
-            left_text_rect = left_text.get_rect(center=self.left_button_rect.center)
-            self.screen.blit(left_text, left_text_rect)
+        pygame.draw.rect(self.screen, self.secondary_color, self.left_button_rect)
+        left_text = self.fonts["medium"].render(left, True, self.highlight_color)
+        left_text_rect = left_text.get_rect(center=self.left_button_rect.center)
+        self.screen.blit(left_text, left_text_rect)
 
-            pygame.draw.rect(self.screen, (77, 97, 39), self.right_button_rect)
-            right_text = self.fonts["medium"].render(right, True, (211, 230, 113))
-            right_text_rect = right_text.get_rect(center=self.right_button_rect.center)
-            self.screen.blit(right_text, right_text_rect)
+        pygame.draw.rect(self.screen, self.secondary_color, self.right_button_rect)
+        right_text = self.fonts["medium"].render(right, True, self.highlight_color)
+        right_text_rect = right_text.get_rect(center=self.right_button_rect.center)
+        self.screen.blit(right_text, right_text_rect)
 
     def handle_event(self, event):
         if self.active and event.type == pygame.MOUSEBUTTONDOWN:
@@ -75,9 +74,9 @@ class InGameMenu:
                         MenuType.LOSS: "retry",
                         MenuType.WIN: "retry",
                         MenuType.START: "start"
-                    }[self.type]
+                    }.get(self.type)
                 if self.right_button_rect.collidepoint(event.pos):
-                    return "quit" if self.type == MenuType.PAUSE else "exit"
+                    return "quit"
         return None
 
 class MenuType(Enum):
