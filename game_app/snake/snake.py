@@ -170,8 +170,9 @@ class Game:
         screen.blit(score_surface, score_rectangle)
 
 def main(root):
-
-    #Initialization and embed inside the Tkinter Window
+    # Initialization and embed inside the Tkinter Window
+    pygame.mixer.pre_init(44100, -16, 2, 64)
+    pygame.mixer.init()
     pygame.init()
     os.environ['SDL_WINDOWID'] = str(root.winfo_id())
     pygame.display.init()
