@@ -117,7 +117,7 @@ class Game:
         self.eat_sound = pygame.mixer.Sound('media/snake/eat.wav')
         self.eat_sound.set_volume(0.40)
         #todo Cleanup temporary code later
-        self.menu = InGameMenu(screen, 139, 180, "#89ac46", "#4d6127", "#d3e671")
+        self.menu = InGameMenu(screen, 139, 180, "#89ac46", "#4d6127", "#d3e671", "#889a66")
 
     def update_logic(self):
         if self.running:

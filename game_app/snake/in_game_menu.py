@@ -2,7 +2,7 @@ import pygame
 from enum import Enum
 
 class InGameMenu:
-    def __init__(self, screen, pos_left, pos_top, primary_color, secondary_color, highlight_color):
+    def __init__(self, screen, pos_left, pos_top, primary_color, secondary_color, highlight_color, hover_color):
         self.screen = screen
         self.active = False
         sizes = {"big": 75, "medium": 55, "small": 30}
@@ -12,6 +12,7 @@ class InGameMenu:
         self.primary_color = primary_color
         self.secondary_color = secondary_color
         self.highlight_color = highlight_color
+        self.hover_color = hover_color
         self.left_button_rect = pygame.Rect(self.pos_left + 41, self.pos_top + 220, 200, 60)
         self.right_button_rect= pygame.Rect(self.pos_left + 281, self.pos_top + 220, 200, 60)
         self.type = MenuType.NONE
@@ -24,7 +25,7 @@ class InGameMenu:
             return
 
         if self.type is MenuType.START:
-            self.draw_base("Collect Apples", "Use Arrow or WASD keys to steer", "Start", "Leave")
+            self.draw_base("Collect Apples", "Use WASD keys to switch direction", "Start", "Leave")
         elif self.type is MenuType.PAUSE:
             self.draw_base("Game paused", "", "Continue", "Leave")
         elif self.type is MenuType.WIN:
@@ -37,6 +38,8 @@ class InGameMenu:
         self.active = True
 
     def draw_base(self, title, additional, left, right):
+        mouse_pos = pygame.mouse.get_pos()
+
         overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
         overlay.fill((50, 50, 50, 180))
         self.screen.blit(overlay, (0, 0))
@@ -55,13 +58,21 @@ class InGameMenu:
         score_rect = additional.get_rect(center=(self.pos_left + 525 // 2, self.pos_top + 140))
         self.screen.blit(additional, score_rect)
 
-        pygame.draw.rect(self.screen, self.secondary_color, self.left_button_rect)
-        left_text = self.fonts["medium"].render(left, True, self.highlight_color)
+        # Left button
+        left_hovered = self.left_button_rect.collidepoint(mouse_pos)
+        left_color = self.hover_color if left_hovered else (77, 97, 39)
+        pygame.draw.rect(self.screen, left_color, self.left_button_rect)
+
+        left_text = self.fonts["medium"].render(left, True, (211, 230, 113))
         left_text_rect = left_text.get_rect(center=self.left_button_rect.center)
         self.screen.blit(left_text, left_text_rect)
 
-        pygame.draw.rect(self.screen, self.secondary_color, self.right_button_rect)
-        right_text = self.fonts["medium"].render(right, True, self.highlight_color)
+        # Right button
+        right_hovered = self.right_button_rect.collidepoint(mouse_pos)
+        right_color = self.hover_color if right_hovered else (77, 97, 39)
+        pygame.draw.rect(self.screen, right_color, self.right_button_rect)
+
+        right_text = self.fonts["medium"].render(right, True, (211, 230, 113))
         right_text_rect = right_text.get_rect(center=self.right_button_rect.center)
         self.screen.blit(right_text, right_text_rect)
 
