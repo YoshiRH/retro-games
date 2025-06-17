@@ -1,56 +1,64 @@
 import pygame
 
 class InGameMenu:
-    def __init__(self, screen):
+    def __init__(self, screen, pos_left, post_top, primary_color, secondary_color, highlight_color):
         self.screen = screen
         self.active = False
         self.font = pygame.font.SysFont(None, 60)
         self.big_font = pygame.font.Font('media/snake/VT323-Regular.ttf', 80)
         self.medium_font = pygame.font.Font('media/snake/VT323-Regular.ttf', 60)
         self.small_font = pygame.font.Font('media/snake/VT323-Regular.ttf', 40)
-        self.continue_button_rect = pygame.Rect(180, 400, 200, 60)
-        self.quit_button_rect = pygame.Rect(420, 400, 200, 60)
+        self.pos_left = pos_left
+        self.pos_top = post_top
+        self.primary_color = primary_color
+        self.secondary_color = secondary_color
+        self.highlight_color = highlight_color
+        self.continue_button_rect = pygame.Rect(self.pos_left + 41, self.pos_top + 220, 200, 60)
+        self.quit_button_rect = pygame.Rect(self.pos_left + 281, self.pos_top + 220, 200, 60)
+        self.type = "none"
 
     def toggle(self):
         self.active = not self.active
 
     def draw(self):
+        self.type = "pause"
+        self.draw_base("Game paused", "Final Score: 100", "Continue", "Leave")
+
+    def draw_base(self, title, additional, left, right):
         if self.active:
-            #background
             overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
             overlay.fill((50, 50, 50, 180))
             self.screen.blit(overlay, (0, 0))
 
-            #base
-            menu_border = pygame.Rect(139, 180, 525, 350)
-            pygame.draw.rect(self.screen, "#4d6127", menu_border)
+            border = pygame.Rect(self.pos_left, self.pos_top, 525, 350)
+            pygame.draw.rect(self.screen, self.secondary_color, border)
 
-            menu_inside = pygame.Rect(169, 210, 465, 290)
-            pygame.draw.rect(self.screen, "#89ac46", menu_inside)
+            inside = pygame.Rect(self.pos_left + 30, self.pos_top + 30, 465, 290)
+            pygame.draw.rect(self.screen, self.primary_color, inside)
 
-
-            title = self.big_font.render("Game paused", True, (77, 97, 39))
-            title_rect = title.get_rect(center=(400, 250))
+            title = self.big_font.render(title, True, (77, 97, 39))
+            title_rect = title.get_rect(center=(self.pos_left + 525 // 2, self.pos_top + 70))
             self.screen.blit(title, title_rect)
 
-            #final_score_text = self.small_font.render("Final Score: 100", True, (77, 97, 39))
-            #score_rect = final_score_text.get_rect(center=(400, 320))
-            #self.screen.blit(final_score_text, score_rect)
+            additional = self.small_font.render(additional, True, (77, 97, 39))
+            score_rect = additional.get_rect(center=(self.pos_left + 525 // 2, self.pos_top + 140))
+            self.screen.blit(additional, score_rect)
 
             pygame.draw.rect(self.screen, (77, 97, 39), self.continue_button_rect)
-            restart_text = self.medium_font.render("Continue", True, (211, 230, 113))
-            restart_text_rect = restart_text.get_rect(center=self.continue_button_rect.center)
-            self.screen.blit(restart_text, restart_text_rect)
+            left_text = self.medium_font.render(left, True, (211, 230, 113))
+            left_text_rect = left_text.get_rect(center=self.continue_button_rect.center)
+            self.screen.blit(left_text, left_text_rect)
 
             pygame.draw.rect(self.screen, (77, 97, 39), self.quit_button_rect)
-            quit_text = self.medium_font.render("Leave", True, (211, 230, 113))
-            quit_text_rect = quit_text.get_rect(center=self.quit_button_rect.center)
-            self.screen.blit(quit_text, quit_text_rect)
+            right_text = self.medium_font.render(right, True, (211, 230, 113))
+            right_text_rect = right_text.get_rect(center=self.quit_button_rect.center)
+            self.screen.blit(right_text, right_text_rect)
 
     def handle_event(self, event):
         if self.active and event.type == pygame.MOUSEBUTTONDOWN:
-            if self.continue_button_rect.collidepoint(event.pos):
-                return "continue"
-            if self.quit_button_rect.collidepoint(event.pos):
-                return "quit"
+            if self.type == "pause":
+                if self.continue_button_rect.collidepoint(event.pos):
+                    return "continue"
+                if self.quit_button_rect.collidepoint(event.pos):
+                    return "quit"
         return None

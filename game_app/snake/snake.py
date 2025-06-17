@@ -179,7 +179,7 @@ def main(root):
     screen = pygame.display.set_mode((800,600))
     clock = pygame.time.Clock()
     game = Game()
-    menu = InGameMenu(screen)
+    menu = InGameMenu(screen, 139, 180, "#89ac46", "#4d6127", "#d3e671")
 
     SCREEN_UPDATE = pygame.USEREVENT
     pygame.time.set_timer(SCREEN_UPDATE, 120)
