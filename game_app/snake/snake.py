@@ -208,6 +208,8 @@ def main(root):
                 result = menu.handle_event(event)
                 if result == "quit":
                     running = False
+                elif result == "continue":
+                    menu.toggle()
             if event.type == SCREEN_UPDATE and not menu.active:
                 game.update_logic()
 
