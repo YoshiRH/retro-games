@@ -5,10 +5,8 @@ class InGameMenu:
     def __init__(self, screen, pos_left, post_top, primary_color, secondary_color, highlight_color):
         self.screen = screen
         self.active = False
-        self.font = pygame.font.SysFont(None, 60)
-        self.big_font = pygame.font.Font('media/snake/VT323-Regular.ttf', 80)
-        self.medium_font = pygame.font.Font('media/snake/VT323-Regular.ttf', 60)
-        self.small_font = pygame.font.Font('media/snake/VT323-Regular.ttf', 40)
+        sizes = {"big": 75, "medium": 55, "small": 30}
+        self.fonts = {k: pygame.font.Font('media/snake/Jersey25-Regular.ttf', v) for k, v in sizes.items()}
         self.pos_left = pos_left
         self.pos_top = post_top
         self.primary_color = primary_color
@@ -26,7 +24,7 @@ class InGameMenu:
             return
 
         if self.type == MenuType.START:
-            self.draw_base("Collect Apples", "Use Arrow/WASD keys to steer", "Start", "Leave")
+            self.draw_base("Collect Apples", "Use Arrow or WASD keys to steer", "Start", "Leave")
         elif self.type == MenuType.PAUSE:
             self.draw_base("Game paused", "", "Continue", "Leave")
         elif self.type == MenuType.WIN:
@@ -50,21 +48,21 @@ class InGameMenu:
             inside = pygame.Rect(self.pos_left + 30, self.pos_top + 30, 465, 290)
             pygame.draw.rect(self.screen, self.primary_color, inside)
 
-            title = self.big_font.render(title, True, (77, 97, 39))
+            title = self.fonts["big"].render(title, True, (77, 97, 39))
             title_rect = title.get_rect(center=(self.pos_left + 525 // 2, self.pos_top + 70))
             self.screen.blit(title, title_rect)
 
-            additional = self.small_font.render(additional, True, (77, 97, 39))
+            additional = self.fonts["small"].render(additional, True, (77, 97, 39))
             score_rect = additional.get_rect(center=(self.pos_left + 525 // 2, self.pos_top + 140))
             self.screen.blit(additional, score_rect)
 
             pygame.draw.rect(self.screen, (77, 97, 39), self.left_button_rect)
-            left_text = self.medium_font.render(left, True, (211, 230, 113))
+            left_text = self.fonts["medium"].render(left, True, (211, 230, 113))
             left_text_rect = left_text.get_rect(center=self.left_button_rect.center)
             self.screen.blit(left_text, left_text_rect)
 
             pygame.draw.rect(self.screen, (77, 97, 39), self.right_button_rect)
-            right_text = self.medium_font.render(right, True, (211, 230, 113))
+            right_text = self.fonts["medium"].render(right, True, (211, 230, 113))
             right_text_rect = right_text.get_rect(center=self.right_button_rect.center)
             self.screen.blit(right_text, right_text_rect)
 
