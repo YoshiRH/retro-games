@@ -1,12 +1,17 @@
 import pygame, os, random
 from pygame.math import Vector2
 from .in_game_menu import InGameMenu, MenuType
+from .additional import draw_game_board
 
 game_board_element_size = 35
 game_board_grid_size_x = 21
 game_board_grid_size_y = 12
-game_board_x = 34
-game_board_y = 145
+game_board_loc_x = 34
+game_board_loc_y = 145
+primary_color = "#89ac46"
+secondary_color = "#4d6127"
+highlight_color = "#d3e671"
+hover_color = "#889a66"
 
 class Snake:
     def __init__(self):
@@ -24,9 +29,9 @@ class Snake:
 
     def draw(self, screen):
         for index, coordinates in enumerate(self.body):
-            rectangle = pygame.Rect(game_board_x + (coordinates.x * game_board_element_size),
-                                game_board_y + (coordinates.y * game_board_element_size)
-                                , game_board_element_size, game_board_element_size)
+            rectangle = pygame.Rect(game_board_loc_x + (coordinates.x * game_board_element_size),
+                                    game_board_loc_y + (coordinates.y * game_board_element_size)
+                                    , game_board_element_size, game_board_element_size)
             sprite = None
             if index == 0:
                 sprite = self.rotate_head()
@@ -94,9 +99,9 @@ class Apple:
                                 random.randint(0, game_board_grid_size_y - 1))
 
     def draw(self, screen):
-        rectangle = pygame.Rect(game_board_x + (self.position.x * game_board_element_size),
-                            game_board_y + (self.position.y * game_board_element_size)
-                            , game_board_element_size, game_board_element_size)
+        rectangle = pygame.Rect(game_board_loc_x + (self.position.x * game_board_element_size),
+                                game_board_loc_y + (self.position.y * game_board_element_size)
+                                , game_board_element_size, game_board_element_size)
         image = pygame.image.load('media/snake/apple.png').convert_alpha()
         screen.blit(image,rectangle)
 
@@ -117,7 +122,7 @@ class Game:
         self.eat_sound = pygame.mixer.Sound('media/snake/eat.wav')
         self.eat_sound.set_volume(0.40)
         #todo Cleanup temporary code later
-        self.menu = InGameMenu(screen, 139, 180, "#89ac46", "#4d6127", "#d3e671", "#889a66")
+        self.menu = InGameMenu(screen, 139, 180, primary_color, secondary_color, highlight_color, hover_color)
 
     def update_logic(self):
         if self.running:
@@ -231,7 +236,7 @@ def main(root):
                 pygame.time.set_timer(SCREEN_UPDATE, game.get_game_speed())
                 game.update_logic()
         screen.fill("#89ac46")
-        draw_game_board(screen)
+        draw_game_board(screen, game_board_element_size, game_board_grid_size_x, game_board_grid_size_y, game_board_loc_x, game_board_loc_y, primary_color, secondary_color, highlight_color)
         game.draw_objects(screen)
 
         game.menu.draw_current(len(game.snake.body) - 3)
@@ -239,28 +244,6 @@ def main(root):
         pygame.display.update()
         clock.tick(60)
     pygame.quit()
-
-def draw_game_board(screen):
-    game_board_border = pygame.Rect(0, 112, 800, 488)
-    game_board = pygame.Rect(game_board_x, game_board_y,
-                             (game_board_grid_size_x * game_board_element_size),
-                             (game_board_grid_size_y * game_board_element_size))
-    pygame.draw.rect(screen, "#4d6127", game_board_border)
-    pygame.draw.rect(screen, "#d3e671", game_board)
-    for y in range (game_board_grid_size_y):
-        for x in range(game_board_grid_size_x):
-            if y % 2 == 0:
-                if x % 2 == 0:
-                    rectangle = pygame.Rect(game_board_x + (x * game_board_element_size),
-                                            game_board_y + (y * game_board_element_size)
-                                            , game_board_element_size, game_board_element_size)
-                    pygame.draw.rect(screen, "#89AC46", rectangle)
-            else:
-                if x % 2 == 1:
-                    rectangle = pygame.Rect(game_board_x + (x * game_board_element_size),
-                                            game_board_y + (y * game_board_element_size)
-                                            , game_board_element_size, game_board_element_size)
-                    pygame.draw.rect(screen, "#89AC46", rectangle)
 
 if __name__ == "__main__":
     main()
