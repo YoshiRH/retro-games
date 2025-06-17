@@ -3,17 +3,7 @@ from pygame.math import Vector2
 from .in_game_menu import MenuType
 from .additional import draw_game_board
 from .game import Game
-
-element_size = 35
-grid_size_x = 21
-grid_size_y = 12
-game_board_loc_x = 34
-game_board_loc_y = 145
-
-primary_color = "#89ac46"
-secondary_color = "#4d6127"
-highlight_color = "#d3e671"
-hover_color = "#889a66"
+from .game_config import GameConfig
 
 def main(root):
     # Initialization and embed inside the Tkinter Window
@@ -24,18 +14,8 @@ def main(root):
     pygame.display.init()
     screen = pygame.display.set_mode((800,600))
     clock = pygame.time.Clock()
-    game = Game(
-        screen,
-        element_size,
-        grid_size_x,
-        grid_size_y,
-        game_board_loc_x,
-        game_board_loc_y,
-        primary_color,
-        secondary_color,
-        highlight_color,
-        hover_color
-    )
+    config = GameConfig()
+    game = Game(screen, config)
 
     SCREEN_UPDATE = pygame.USEREVENT
     pygame.time.set_timer(SCREEN_UPDATE, 120)
@@ -56,18 +36,7 @@ def main(root):
                         else:
                             game.menu.active = False
                     case pygame.K_r:
-                        game = Game(
-                            screen,
-                            element_size,
-                            grid_size_x,
-                            grid_size_y,
-                            game_board_loc_x,
-                            game_board_loc_y,
-                            primary_color,
-                            secondary_color,
-                            highlight_color,
-                            hover_color
-                        )
+                        game = Game(screen, config)
                     case pygame.K_w:
                         game.snake.try_change_direction(Vector2(0,-1))
                     case pygame.K_s:
@@ -83,25 +52,14 @@ def main(root):
                 elif result == "continue":
                     game.menu.disable()
                 elif result == "retry":
-                    game = Game(
-                        screen,
-                        element_size,
-                        grid_size_x,
-                        grid_size_y,
-                        game_board_loc_x,
-                        game_board_loc_y,
-                        primary_color,
-                        secondary_color,
-                        highlight_color,
-                        hover_color
-                    )
+                    game = Game(screen, config)
                 elif result == "start":
                     game.menu.disable()
             if event.type == SCREEN_UPDATE and not game.menu.active:
                 pygame.time.set_timer(SCREEN_UPDATE, game.get_game_speed())
                 game.update_logic()
         screen.fill("#89ac46")
-        draw_game_board(screen, element_size, grid_size_x, grid_size_y, game_board_loc_x, game_board_loc_y, primary_color, secondary_color, highlight_color)
+        draw_game_board(screen, config)
         game.draw_objects(screen)
 
         game.menu.draw_current(len(game.snake.body) - 3)

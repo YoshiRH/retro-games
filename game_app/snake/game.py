@@ -1,38 +1,26 @@
 import pygame
 from .snake import Apple, Snake
 from .in_game_menu import InGameMenu, MenuType
+from .game_config import GameConfig
 
 class Game:
-    def __init__(
-        self,
-        screen,
-        element_size,
-        grid_size_x,
-        grid_size_y,
-        game_board_loc_x,
-        game_board_loc_y,
-        primary_color,
-        secondary_color,
-        highlight_color,
-        hover_color
-    ):
-        self.element_size = element_size
-        self.grid_size_x = grid_size_x
-        self.grid_size_y = grid_size_y
-        self.game_board_loc_x = game_board_loc_x
-        self.game_board_loc_y = game_board_loc_y
-
-        self.apple = Apple(element_size, grid_size_x, grid_size_y, game_board_loc_x, game_board_loc_y)
-        self.snake = Snake(element_size, game_board_loc_x, game_board_loc_y)
+    def __init__(self, screen, config: GameConfig):
+        self.config = config
+        self.apple = Apple(config.element_size, config.grid_size_x, config.grid_size_y,
+                           config.game_board_loc_x, config.game_board_loc_y)
+        self.snake = Snake(config.element_size, config.game_board_loc_x, config.game_board_loc_y)
         self.running = True
 
         self.hit_sound = pygame.mixer.Sound('media/snake/hit.wav')
         self.hit_sound.set_volume(0.40)
-
         self.eat_sound = pygame.mixer.Sound('media/snake/eat.wav')
         self.eat_sound.set_volume(0.40)
 
-        self.menu = InGameMenu(screen, 139, 180, primary_color, secondary_color, highlight_color, hover_color)
+        self.menu = InGameMenu(screen, 139, 180,
+                               config.primary_color,
+                               config.secondary_color,
+                               config.highlight_color,
+                               config.hover_color)
 
     def update_logic(self):
         if self.running:
