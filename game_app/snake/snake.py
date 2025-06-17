@@ -163,8 +163,8 @@ class Game:
         score_border = pygame.Rect(314, 14, 169, 84)
         font = pygame.font.Font('media/snake/Jersey25-Regular.ttf', 95)
         score = str(len(self.snake.body) - 3)
-        score_rectangle = pygame.Rect(330, 5, 174, 70)
         score_surface = font.render(score, True, '#d3e671')
+        score_rectangle = score_surface.get_rect(center=score_border.center)
 
         pygame.draw.rect(screen, "#4d6127", score_border)
         screen.blit(score_surface, score_rectangle)
