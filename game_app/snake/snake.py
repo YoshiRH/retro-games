@@ -108,7 +108,7 @@ class Apple:
                 self.reposition(snake)
 
 class Game:
-    def __init__(self):
+    def __init__(self, screen):
         self.apple = Apple()
         self.snake = Snake()
         self.running = True
@@ -117,6 +117,8 @@ class Game:
         self.eat_sound = pygame.mixer.Sound('media/snake/eat.wav')
         self.eat_sound.set_volume(0.40)
         self.end_pop_up = pygame.image.load('media/snake/endPopUp.png').convert_alpha()
+        #todo Cleanup temporary code later
+        self.menu = InGameMenu(screen, 139, 180, "#89ac46", "#4d6127", "#d3e671")
 
     def update_logic(self):
         if self.running:
@@ -138,6 +140,9 @@ class Game:
             self.snake.grow = True
             self.eat_sound.play()
             self.apple.reposition(self.snake)
+        if len(self.snake.body) - 3 >= 245:
+            self.running = False
+            self.menu.enable_menu("win")
 
     def check_self_collision(self):
         upcoming_position = self.snake.body[0] + self.snake.direction
@@ -155,6 +160,7 @@ class Game:
     def fail(self):
         self.running = False
         self.hit_sound.play()
+        self.menu.enable_menu("loss")
 
     def draw_score(self, screen):
         score_border = pygame.Rect(314, 14, 169, 84)
@@ -178,11 +184,13 @@ def main(root):
     pygame.display.init()
     screen = pygame.display.set_mode((800,600))
     clock = pygame.time.Clock()
-    game = Game()
-    menu = InGameMenu(screen, 139, 180, "#89ac46", "#4d6127", "#d3e671")
+    game = Game(screen)
+    #menu = InGameMenu(screen, 139, 180, "#89ac46", "#4d6127", "#d3e671")
 
     SCREEN_UPDATE = pygame.USEREVENT
     pygame.time.set_timer(SCREEN_UPDATE, 120)
+
+    game.menu.enable_menu("start")
 
     #Main game loop
     running = True
@@ -193,9 +201,12 @@ def main(root):
             if event.type == pygame.KEYDOWN:
                 match event.key:
                     case pygame.K_ESCAPE:
-                        menu.toggle()
+                        if not game.menu.active:
+                            game.menu.enable_menu("pause")
+                        else:
+                            game.menu.active = False
                     case pygame.K_r:
-                        game = Game()
+                        game = Game(screen)
                     case pygame.K_w:
                         game.snake.try_change_direction(Vector2(0,-1))
                     case pygame.K_s:
@@ -204,20 +215,23 @@ def main(root):
                         game.snake.try_change_direction(Vector2(1, 0))
                     case pygame.K_a:
                         game.snake.try_change_direction(Vector2(-1, 0))
-            if menu.active:
-                result = menu.handle_event(event)
-                if result == "quit":
+            if game.menu.active:
+                result = game.menu.handle_event(event)
+                if result in ["quit", "exit"]:
                     running = False
                 elif result == "continue":
-                    menu.toggle()
-            if event.type == SCREEN_UPDATE and not menu.active:
+                    game.menu.disable()
+                elif result == "retry":
+                    game = Game(screen)
+                elif result == "start":
+                    game.menu.disable()
+            if event.type == SCREEN_UPDATE and not game.menu.active:
                 game.update_logic()
-
         screen.fill("#89ac46")
         draw_game_board(screen)
         game.draw_objects(screen)
 
-        menu.draw()
+        game.menu.draw_current(len(game.snake.body) - 3)
 
         pygame.display.update()
         clock.tick(60)

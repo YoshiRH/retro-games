@@ -13,16 +13,30 @@ class InGameMenu:
         self.primary_color = primary_color
         self.secondary_color = secondary_color
         self.highlight_color = highlight_color
-        self.continue_button_rect = pygame.Rect(self.pos_left + 41, self.pos_top + 220, 200, 60)
-        self.quit_button_rect = pygame.Rect(self.pos_left + 281, self.pos_top + 220, 200, 60)
+        self.left_button_rect = pygame.Rect(self.pos_left + 41, self.pos_top + 220, 200, 60)
+        self.right_button_rect= pygame.Rect(self.pos_left + 281, self.pos_top + 220, 200, 60)
         self.type = "none"
 
-    def toggle(self):
-        self.active = not self.active
+    def disable(self):
+        self.active = False
 
-    def draw(self):
-        self.type = "pause"
-        self.draw_base("Game paused", "Final Score: 100", "Continue", "Leave")
+    def draw_current(self, score):
+        if not self.active:
+            return
+
+        if self.type == "start":
+            self.draw_base("Collect Apples", "Use Arrow/WASD keys to steer", "Start", "Leave")
+        elif self.type == "pause":
+            self.draw_base("Game paused", "", "Continue", "Leave")
+        elif self.type == "win":
+            self.draw_base("You won!", f"All apples collected :)", "Retry", "Leave")
+        elif self.type == "loss":
+            self.draw_base("You lost!", f"Final Score: {score}", "Retry", "Leave")
+
+    def enable_menu(self, type):
+        self.type = type
+        # todo input check
+        self.active = True
 
     def draw_base(self, title, additional, left, right):
         if self.active:
@@ -44,21 +58,26 @@ class InGameMenu:
             score_rect = additional.get_rect(center=(self.pos_left + 525 // 2, self.pos_top + 140))
             self.screen.blit(additional, score_rect)
 
-            pygame.draw.rect(self.screen, (77, 97, 39), self.continue_button_rect)
+            pygame.draw.rect(self.screen, (77, 97, 39), self.left_button_rect)
             left_text = self.medium_font.render(left, True, (211, 230, 113))
-            left_text_rect = left_text.get_rect(center=self.continue_button_rect.center)
+            left_text_rect = left_text.get_rect(center=self.left_button_rect.center)
             self.screen.blit(left_text, left_text_rect)
 
-            pygame.draw.rect(self.screen, (77, 97, 39), self.quit_button_rect)
+            pygame.draw.rect(self.screen, (77, 97, 39), self.right_button_rect)
             right_text = self.medium_font.render(right, True, (211, 230, 113))
-            right_text_rect = right_text.get_rect(center=self.quit_button_rect.center)
+            right_text_rect = right_text.get_rect(center=self.right_button_rect.center)
             self.screen.blit(right_text, right_text_rect)
 
     def handle_event(self, event):
         if self.active and event.type == pygame.MOUSEBUTTONDOWN:
-            if self.type == "pause":
-                if self.continue_button_rect.collidepoint(event.pos):
-                    return "continue"
-                if self.quit_button_rect.collidepoint(event.pos):
-                    return "quit"
+            if self.type in ["pause", "loss", "win", "start"]:
+                if self.left_button_rect.collidepoint(event.pos):
+                    return {
+                        "pause": "continue",
+                        "loss": "retry",
+                        "win": "retry",
+                        "start": "start"
+                    }[self.type]
+                if self.right_button_rect.collidepoint(event.pos):
+                    return "quit" if self.type == "pause" else "exit"
         return None
