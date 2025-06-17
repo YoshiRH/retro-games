@@ -1,3 +1,3 @@
-from .snake import main as start_snake
+from .main import main as start_snake
 
 GAME_NAME = "Snake"
