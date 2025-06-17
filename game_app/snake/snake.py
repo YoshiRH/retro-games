@@ -169,6 +169,14 @@ class Game:
         pygame.draw.rect(screen, "#4d6127", score_border)
         screen.blit(score_surface, score_rectangle)
 
+    def get_game_speed(self):
+        score = len(self.snake.body) - 3
+        speed = 200 - (score * 5)
+        if speed < 120:
+            return 120
+        else:
+            return speed
+
 def main(root):
     # Initialization and embed inside the Tkinter Window
     pygame.mixer.pre_init(44100, -16, 2, 64)
@@ -220,6 +228,7 @@ def main(root):
                 elif result == "start":
                     game.menu.disable()
             if event.type == SCREEN_UPDATE and not game.menu.active:
+                pygame.time.set_timer(SCREEN_UPDATE, game.get_game_speed())
                 game.update_logic()
         screen.fill("#89ac46")
         draw_game_board(screen)
