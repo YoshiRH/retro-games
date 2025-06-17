@@ -1,4 +1,5 @@
 import pygame
+from enum import Enum
 
 class InGameMenu:
     def __init__(self, screen, pos_left, post_top, primary_color, secondary_color, highlight_color):
@@ -15,7 +16,7 @@ class InGameMenu:
         self.highlight_color = highlight_color
         self.left_button_rect = pygame.Rect(self.pos_left + 41, self.pos_top + 220, 200, 60)
         self.right_button_rect= pygame.Rect(self.pos_left + 281, self.pos_top + 220, 200, 60)
-        self.type = "none"
+        self.type = MenuType.NONE
 
     def disable(self):
         self.active = False
@@ -24,18 +25,17 @@ class InGameMenu:
         if not self.active:
             return
 
-        if self.type == "start":
+        if self.type == MenuType.START:
             self.draw_base("Collect Apples", "Use Arrow/WASD keys to steer", "Start", "Leave")
-        elif self.type == "pause":
+        elif self.type == MenuType.PAUSE:
             self.draw_base("Game paused", "", "Continue", "Leave")
-        elif self.type == "win":
+        elif self.type == MenuType.WIN:
             self.draw_base("You won!", f"All apples collected :)", "Retry", "Leave")
-        elif self.type == "loss":
+        elif self.type == MenuType.LOSS:
             self.draw_base("You lost!", f"Final Score: {score}", "Retry", "Leave")
 
-    def enable_menu(self, type):
-        self.type = type
-        # todo input check
+    def enable_menu(self, menu_type):
+        self.type = menu_type
         self.active = True
 
     def draw_base(self, title, additional, left, right):
@@ -70,14 +70,21 @@ class InGameMenu:
 
     def handle_event(self, event):
         if self.active and event.type == pygame.MOUSEBUTTONDOWN:
-            if self.type in ["pause", "loss", "win", "start"]:
+            if self.type in [MenuType.PAUSE, MenuType.LOSS, MenuType.WIN, MenuType.START]:
                 if self.left_button_rect.collidepoint(event.pos):
                     return {
-                        "pause": "continue",
-                        "loss": "retry",
-                        "win": "retry",
-                        "start": "start"
+                        MenuType.PAUSE: "continue",
+                        MenuType.LOSS: "retry",
+                        MenuType.WIN: "retry",
+                        MenuType.START: "start"
                     }[self.type]
                 if self.right_button_rect.collidepoint(event.pos):
-                    return "quit" if self.type == "pause" else "exit"
+                    return "quit" if self.type == MenuType.PAUSE else "exit"
         return None
+
+class MenuType(Enum):
+    NONE = 0
+    START = 1
+    PAUSE = 2
+    WIN = 3
+    LOSS = 4

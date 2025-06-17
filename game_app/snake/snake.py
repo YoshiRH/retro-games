@@ -1,6 +1,6 @@
 import pygame, os, random
 from pygame.math import Vector2
-from .in_game_menu import InGameMenu
+from .in_game_menu import InGameMenu, MenuType
 
 game_board_element_size = 35
 game_board_grid_size_x = 21
@@ -139,7 +139,7 @@ class Game:
             self.apple.reposition(self.snake)
         if len(self.snake.body) - 3 >= 245:
             self.running = False
-            self.menu.enable_menu("win")
+            self.menu.enable_menu(MenuType.WIN)
 
     def check_self_collision(self):
         upcoming_position = self.snake.body[0] + self.snake.direction
@@ -157,7 +157,7 @@ class Game:
     def fail(self):
         self.running = False
         self.hit_sound.play()
-        self.menu.enable_menu("loss")
+        self.menu.enable_menu(MenuType.LOSS)
 
     def draw_score(self, screen):
         score_border = pygame.Rect(314, 14, 169, 84)
@@ -183,7 +183,7 @@ def main(root):
     SCREEN_UPDATE = pygame.USEREVENT
     pygame.time.set_timer(SCREEN_UPDATE, 120)
 
-    game.menu.enable_menu("start")
+    game.menu.enable_menu(MenuType.START)
 
     #Main game loop
     running = True
@@ -195,7 +195,7 @@ def main(root):
                 match event.key:
                     case pygame.K_ESCAPE:
                         if not game.menu.active:
-                            game.menu.enable_menu("pause")
+                            game.menu.enable_menu(MenuType.PAUSE)
                         else:
                             game.menu.active = False
                     case pygame.K_r:
