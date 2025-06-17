@@ -22,6 +22,9 @@ class Game:
                                config.highlight_color,
                                config.hover_color)
 
+        self.grid_size_x = config.grid_size_x
+        self.grid_size_y = config.grid_size_y
+
     def update_logic(self):
         if self.running:
             self.check_self_collision()
