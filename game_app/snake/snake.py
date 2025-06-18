@@ -7,6 +7,8 @@ class Snake:
         self.element_size = element_size
         self.loc_x = loc_x
         self.loc_y = loc_y
+        self.grid_size_x = grid_size_x
+        self.grid_size_y = grid_size_y
 
         self.body = [Vector2(5, 6), Vector2(4, 6), Vector2(3, 6)]
         self.direction = Vector2(1, 0)
@@ -17,9 +19,6 @@ class Snake:
         self.tail_sprite = pygame.image.load('media/snake/tail.png').convert_alpha()
         self.turn_sprite = pygame.image.load('media/snake/turn.png').convert_alpha()
         self.dead_sprite = pygame.image.load('media/snake/dead.png').convert_alpha()
-
-        self.grid_size_x = grid_size_x
-        self.grid_size_y = grid_size_y
 
         self.direction_queue = deque()
         self.alive = True
@@ -128,6 +127,7 @@ class Apple:
         self.loc_x = loc_x
         self.loc_y = loc_y
         self.position = self.generate_random_position()
+        self.image = pygame.image.load('media/snake/apple.png').convert_alpha()
 
     def generate_random_position(self):
         return Vector2(
@@ -141,11 +141,10 @@ class Apple:
             self.loc_y + (self.position.y * self.element_size),
             self.element_size, self.element_size
         )
-        image = pygame.image.load('media/snake/apple.png').convert_alpha()
-        screen.blit(image, rectangle)
+        screen.blit(self.image, rectangle)
 
     def reposition(self, snake):
-        self.position = self.generate_random_position()
-        for coordinates in snake.body:
-            if coordinates == self.position:
-                self.reposition(snake)
+        while True:
+            self.position = self.generate_random_position()
+            if self.position not in snake.body:
+                break
