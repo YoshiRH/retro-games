@@ -32,10 +32,6 @@ class Snake:
         if new_dir + last_dir != Vector2(0, 0):  # Prevent 180° reversal
             self.direction_queue.append(new_dir)
 
-    def try_change_direction(self, new_direction):
-        if not self.body[0] + new_direction == self.body[1]:
-            self.direction = new_direction
-
     def draw(self, screen):
         for index, coordinates in enumerate(self.body):
             rectangle = pygame.Rect(
@@ -58,7 +54,7 @@ class Snake:
                 elif previous_difference.y == next_difference.y:
                     sprite = pygame.transform.rotate(self.body_sprite, 90)
                 else:
-                    sprite = self.get_turn_sprite(previous_difference, next_difference)
+                    sprite = self.rotate_middle(previous_difference, next_difference)
 
             if sprite:
                 screen.blit(sprite, rectangle)
@@ -68,28 +64,9 @@ class Snake:
     def rotate_head(self):
         rotation = self.body[1] - self.body[0]
         base_sprite = self.head_sprite if self.alive else self.dead_sprite
+        return self.rotate_sprite(base_sprite, rotation)
 
-        if rotation == Vector2(0, 1):
-            return base_sprite
-        elif rotation == Vector2(1, 0):
-            return pygame.transform.rotate(base_sprite, 90)
-        elif rotation == Vector2(0, -1):
-            return pygame.transform.rotate(base_sprite, 180)
-        elif rotation == Vector2(-1, 0):
-            return pygame.transform.rotate(base_sprite, 270)
-
-    def rotate_tail(self):
-        rotation = self.body[-2] - self.body[-1]
-        if rotation == Vector2(0, 1):
-            return self.tail_sprite
-        elif rotation == Vector2(1, 0):
-            return pygame.transform.rotate(self.tail_sprite, 90)
-        elif rotation == Vector2(0, -1):
-            return pygame.transform.rotate(self.tail_sprite, 180)
-        elif rotation == Vector2(-1, 0):
-            return pygame.transform.rotate(self.tail_sprite, 270)
-
-    def get_turn_sprite(self, prev, next_):
+    def rotate_middle(self, prev, next_):
         if (prev.x == 1 and next_.y == -1) or (prev.y == -1 and next_.x == 1):
             return pygame.transform.rotate(self.turn_sprite, 0)
         elif (prev.x == -1 and next_.y == -1) or (prev.y == -1 and next_.x == -1):
@@ -99,6 +76,16 @@ class Snake:
         elif (prev.x == 1 and next_.y == 1) or (prev.y == 1 and next_.x == 1):
             return pygame.transform.rotate(self.turn_sprite, 270)
 
+    def rotate_tail(self):
+        rotation = self.body[-2] - self.body[-1]
+        return self.rotate_sprite(self.tail_sprite, rotation)
+
+    def rotate_sprite(self, sprite, direction):
+        if direction == Vector2(0, 1): return sprite
+        elif direction == Vector2(1, 0): return pygame.transform.rotate(sprite, 90)
+        elif direction == Vector2(0, -1): return pygame.transform.rotate(sprite, 180)
+        elif direction == Vector2(-1, 0): return pygame.transform.rotate(sprite, 270)
+
     def move(self):
         if self.direction_queue:
             self.direction = self.direction_queue.popleft()
@@ -106,7 +93,8 @@ class Snake:
         new_head = self.body[0] + self.direction
         self.body.insert(0, new_head)
 
-        if new_head in self.body[1:-1]:  # Not counting tail
+        check_body = self.body[1:] if self.grow else self.body[1:-1]
+        if new_head in check_body:
             self.alive = False
             raise Exception("self_collision")
 
