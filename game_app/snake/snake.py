@@ -32,6 +32,17 @@ class Snake:
         if new_dir + last_dir != Vector2(0, 0):  # Prevent 180° reversal
             self.direction_queue.append(new_dir)
 
+    def move(self):
+        if self.direction_queue:
+            self.direction = self.direction_queue.popleft()
+
+        self.body.insert(0, self.body[0] + self.direction)
+
+        if self.grow:
+            self.grow = False
+        else:
+            self.body.pop()
+
     def draw(self, screen):
         for index, segment in enumerate(self.body):
             rect = self.get_rect_for_segment(segment)
@@ -83,22 +94,12 @@ class Snake:
 
         return None  # Fallback (shouldn't be reached)
 
-    def rotate_sprite(self, sprite, direction):
+    @staticmethod
+    def rotate_sprite(sprite, direction):
         if direction == Vector2(0, 1): return sprite
         elif direction == Vector2(1, 0): return pygame.transform.rotate(sprite, 90)
         elif direction == Vector2(0, -1): return pygame.transform.rotate(sprite, 180)
         elif direction == Vector2(-1, 0): return pygame.transform.rotate(sprite, 270)
-
-    def move(self):
-        if self.direction_queue:
-            self.direction = self.direction_queue.popleft()
-
-        self.body.insert(0, self.body[0] + self.direction)
-
-        if self.grow:
-            self.grow = False
-        else:
-            self.body.pop()
 
 class Apple:
     def __init__(self, element_size, grid_size_x, grid_size_y, loc_x, loc_y):
@@ -109,12 +110,6 @@ class Apple:
         self.loc_y = loc_y
         self.position = self.generate_random_position()
         self.image = pygame.image.load('media/snake/apple.png').convert_alpha()
-
-    def generate_random_position(self):
-        return Vector2(
-            random.randint(0, self.grid_size_x - 1),
-            random.randint(0, self.grid_size_y - 1)
-        )
 
     def draw(self, screen):
         rectangle = pygame.Rect(
@@ -129,3 +124,8 @@ class Apple:
             self.position = self.generate_random_position()
             if self.position not in snake.body:
                 break
+
+    def generate_random_position(self):
+        return Vector2(
+            random.randint(0, self.grid_size_x - 1),
+            random.randint(0, self.grid_size_y - 1))
