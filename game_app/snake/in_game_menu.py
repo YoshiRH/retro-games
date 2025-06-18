@@ -42,7 +42,7 @@ class InGameMenu:
         self.type = menu_type
         self.active = True
 
-    def draw_base(self, title, additional, row_2, left, right):
+    def draw_base(self, title, info_1, info_2, left, right):
         mouse_pos = pygame.mouse.get_pos()
 
         overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
@@ -59,13 +59,13 @@ class InGameMenu:
         title_rect = title.get_rect(center=(self.pos_left + 525 // 2, self.pos_top + 70))
         self.screen.blit(title, title_rect)
 
-        additional = self.fonts["small"].render(additional, True, self.secondary_color)
-        score_rect = additional.get_rect(center=(self.pos_left + 525 // 2, self.pos_top + 140))
-        self.screen.blit(additional, score_rect)
+        info_1 = self.fonts["small"].render(info_1, True, self.secondary_color)
+        info_rect = info_1.get_rect(center=(self.pos_left + 525 // 2, self.pos_top + 140))
+        self.screen.blit(info_1, info_rect)
 
-        row_2_surface = self.fonts["small"].render(row_2, True, self.secondary_color)
-        score_rect = row_2_surface.get_rect(center=(self.pos_left + 525 // 2, self.pos_top + 175))
-        self.screen.blit(row_2_surface, score_rect)
+        info_2 = self.fonts["small"].render(info_2, True, self.secondary_color)
+        info_rect = info_2.get_rect(center=(self.pos_left + 525 // 2, self.pos_top + 175))
+        self.screen.blit(info_2, info_rect)
 
         # Left button
         left_hovered = self.left_button_rect.collidepoint(mouse_pos)
