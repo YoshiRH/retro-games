@@ -25,19 +25,19 @@ class InGameMenu:
             return
 
         if self.type is MenuType.START:
-            self.draw_base("Collect Apples", "Use WASD keys to switch direction", "Start", "Leave")
+            self.draw_base("Collect Apples", "Use WASD keys to switch direction", "", "Start", "Leave")
         elif self.type is MenuType.PAUSE:
-            self.draw_base("Game paused", "", "Continue", "Leave")
+            self.draw_base("Game paused", "", "", "Continue", "Leave")
         elif self.type is MenuType.WIN:
-            self.draw_base("You won!", f"All apples collected :)", "Retry", "Leave")
+            self.draw_base("You won!", f"All apples collected :)", "", "Retry", "Leave")
         elif self.type is MenuType.LOSS:
-            self.draw_base("You lost!", f"Final Score: {score}", "Retry", "Leave")
+            self.draw_base("You lost!", f"Final Score: {score}", "", "Retry", "Leave")
 
     def enable_menu(self, menu_type):
         self.type = menu_type
         self.active = True
 
-    def draw_base(self, title, additional, left, right):
+    def draw_base(self, title, additional, row_2, left, right):
         mouse_pos = pygame.mouse.get_pos()
 
         overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
@@ -57,6 +57,10 @@ class InGameMenu:
         additional = self.fonts["small"].render(additional, True, self.secondary_color)
         score_rect = additional.get_rect(center=(self.pos_left + 525 // 2, self.pos_top + 140))
         self.screen.blit(additional, score_rect)
+
+        row_2_surface = self.fonts["small"].render(row_2, True, self.secondary_color)
+        score_rect = row_2_surface.get_rect(center=(self.pos_left + 525 // 2, self.pos_top + 175))
+        self.screen.blit(row_2_surface, score_rect)
 
         # Left button
         left_hovered = self.left_button_rect.collidepoint(mouse_pos)
