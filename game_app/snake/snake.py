@@ -103,14 +103,14 @@ class Snake:
 
 class Apple:
     def __init__(self, element_size, grid_size_x, grid_size_y, loc_x, loc_y):
-        self.position = self._generate_random_position()
-
         self._element_size = element_size
         self._grid_size_x = grid_size_x
         self._grid_size_y = grid_size_y
         self._loc_x = loc_x
         self._loc_y = loc_y
         self._image = pygame.image.load('media/snake/apple.png').convert_alpha()
+
+        self.position = self._generate_random_position()
 
     def reposition(self, snake):
         while True:
