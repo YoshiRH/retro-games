@@ -1,4 +1,4 @@
-import pygame
+import pygame, os
 from .snake import Apple, Snake
 from .in_game_menu import InGameMenu, MenuType
 from .game_config import GameConfig
@@ -26,6 +26,7 @@ class Game:
         self.grid_size_y = config.grid_size_y
 
         self.score = 0
+        self.best_score = self.load_best_score()
 
     def update_logic(self):
         if self.running:
@@ -48,6 +49,8 @@ class Game:
         if self.apple.position == self.snake.body[0]:
             self.snake.grow = True
             self.score += 1
+            if self.score > self.best_score:
+                self.best_score = self.score
             self.eat_sound.play()
             if self.score >= (self.config.grid_size_x * self.config.grid_size_y - 5):
                 self.running = False
@@ -77,6 +80,7 @@ class Game:
     def fail(self):
         self.running = False
         self.hit_sound.play()
+        self.save_best_score()
         self.menu.enable_menu(MenuType.LOSS)
 
     def draw_score(self, screen):
@@ -91,3 +95,16 @@ class Game:
     def get_game_speed(self):
         score = len(self.snake.body) - 3
         return max(120, 200 - (score * 5))
+
+    def load_best_score(self):
+        if os.path.exists("snake/best_score.txt"):
+            try:
+                with open("snake/best_score.txt", "r") as f:
+                    return int(f.read())
+            except ValueError:
+                return 0
+        return 0
+
+    def save_best_score(self):
+        with open("snake/best_score.txt", "w") as f:
+            f.write(str(self.best_score))
