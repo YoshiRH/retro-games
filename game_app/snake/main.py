@@ -32,7 +32,10 @@ def main(root):
             # If the menu is active, only handle menu events
             if game.menu.active:
                 result = game.menu.handle_event(event)
-                if result == "quit":
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    if game.menu.type == MenuType.PAUSE:
+                        game.menu.disable()
+                elif result == "quit":
                     running = False
                 elif result == "continue":
                     game.menu.disable()
@@ -40,7 +43,7 @@ def main(root):
                     game = Game(screen, config)
                 elif result == "start":
                     game.menu.disable()
-                continue  # Skip rest of loop if menu is active
+                continue
 
             # These happen only if menu is NOT active
             if event.type == pygame.KEYDOWN:
