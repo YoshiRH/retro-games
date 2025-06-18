@@ -59,7 +59,7 @@ class Game:
         direction = self.snake.direction_queue[0] if self.snake.direction_queue else self.snake.direction
         upcoming_position = self.snake.body[0] + direction
 
-        for coordinates in self.snake.body:
+        for coordinates in self.snake.body[:-1]: #Not counting the tail to avoid unnecessary crashes
             if upcoming_position == coordinates:
                 self.fail()
 

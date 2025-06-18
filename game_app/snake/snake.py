@@ -17,7 +17,7 @@ class Snake:
         self.tail_sprite = pygame.image.load('media/snake/tail.png').convert_alpha()
         self.turn_sprite = pygame.image.load('media/snake/turn.png').convert_alpha()
 
-        self.grid_size_x =grid_size_x
+        self.grid_size_x = grid_size_x
         self.grid_size_y = grid_size_y
 
         self.direction_queue = deque()
@@ -103,7 +103,7 @@ class Snake:
         new_head = self.body[0] + self.direction
         self.body.insert(0, new_head)
 
-        if new_head in self.body[1:]:
+        if new_head in self.body[1:-1]: #Not counting the tail to avoid unnecessary crashes
             raise Exception("self_collision")
 
         if not (0 <= new_head.x < self.grid_size_x) or not (0 <= new_head.y < self.grid_size_y):
