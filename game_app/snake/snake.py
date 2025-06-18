@@ -1,8 +1,9 @@
 import pygame, random
 from pygame.math import Vector2
+from collections import deque
 
 class Snake:
-    def __init__(self, element_size, loc_x, loc_y):
+    def __init__(self, element_size, loc_x, loc_y, grid_size_x, grid_size_y):
         self.element_size = element_size
         self.loc_x = loc_x
         self.loc_y = loc_y
@@ -15,6 +16,20 @@ class Snake:
         self.head_sprite = pygame.image.load('media/snake/head.png').convert_alpha()
         self.tail_sprite = pygame.image.load('media/snake/tail.png').convert_alpha()
         self.turn_sprite = pygame.image.load('media/snake/turn.png').convert_alpha()
+
+        self.grid_size_x =grid_size_x
+        self.grid_size_y = grid_size_y
+
+        self.direction_queue = deque()
+
+    def queue_direction(self, new_dir):
+        if len(self.direction_queue) == 0:
+            last_dir = self.direction
+        else:
+            last_dir = self.direction_queue[-1]
+
+        if new_dir + last_dir != Vector2(0, 0):  # Prevent 180° reversal
+            self.direction_queue.append(new_dir)
 
     def try_change_direction(self, new_direction):
         if not self.body[0] + new_direction == self.body[1]:
@@ -82,11 +97,22 @@ class Snake:
             return pygame.transform.rotate(self.turn_sprite, 270)
 
     def move(self):
-        if self.grow:
-            self.grow = False
-        else:
+        if self.direction_queue:
+            self.direction = self.direction_queue.popleft()
+
+        new_head = self.body[0] + self.direction
+        self.body.insert(0, new_head)
+
+        if new_head in self.body[1:]:
+            raise Exception("self_collision")
+
+        if not (0 <= new_head.x < self.grid_size_x) or not (0 <= new_head.y < self.grid_size_y):
+            raise Exception("border_collision")
+
+        if not self.grow:
             self.body.pop()
-        self.body.insert(0, self.body[0] + self.direction)
+        else:
+            self.grow = False
 
 class Apple:
     def __init__(self, element_size, grid_size_x, grid_size_y, loc_x, loc_y):

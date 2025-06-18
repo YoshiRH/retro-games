@@ -38,13 +38,13 @@ def main(root):
                     case pygame.K_r:
                         game = Game(screen, config)
                     case pygame.K_w:
-                        game.snake.try_change_direction(Vector2(0,-1))
+                        game.snake.queue_direction(Vector2(0, -1))
                     case pygame.K_s:
-                        game.snake.try_change_direction(Vector2(0, 1))
-                    case pygame.K_d:
-                        game.snake.try_change_direction(Vector2(1, 0))
+                        game.snake.queue_direction(Vector2(0, 1))
                     case pygame.K_a:
-                        game.snake.try_change_direction(Vector2(-1, 0))
+                        game.snake.queue_direction(Vector2(-1, 0))
+                    case pygame.K_d:
+                        game.snake.queue_direction(Vector2(1, 0))
             if game.menu.active:
                 result = game.menu.handle_event(event)
                 if result == "quit":

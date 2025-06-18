@@ -8,7 +8,7 @@ class Game:
         self.config = config
         self.apple = Apple(config.element_size, config.grid_size_x, config.grid_size_y,
                            config.game_board_loc_x, config.game_board_loc_y)
-        self.snake = Snake(config.element_size, config.game_board_loc_x, config.game_board_loc_y)
+        self.snake = Snake(config.element_size, config.game_board_loc_x, config.game_board_loc_y, config.grid_size_x, config.grid_size_y)
         self.running = True
 
         self.hit_sound = pygame.mixer.Sound('media/snake/hit.wav')
@@ -31,7 +31,11 @@ class Game:
             self.check_border_collision()
             self.try_eating_apple()
             if self.running:
-                self.snake.move()
+                try:
+                    self.snake.move()
+                except Exception as e:
+                    if str(e) in ["self_collision", "border_collision"]:
+                        self.fail()
 
     def draw_objects(self, screen):
         self.apple.draw(screen)
@@ -49,13 +53,17 @@ class Game:
             self.menu.enable_menu(MenuType.WIN)
 
     def check_self_collision(self):
-        upcoming_position = self.snake.body[0] + self.snake.direction
+        direction = self.snake.direction_queue[0] if self.snake.direction_queue else self.snake.direction
+        upcoming_position = self.snake.body[0] + direction
+
         for coordinates in self.snake.body:
             if upcoming_position == coordinates:
                 self.fail()
 
     def check_border_collision(self):
-        upcoming_position = self.snake.body[0] + self.snake.direction
+        direction = self.snake.direction_queue[0] if self.snake.direction_queue else self.snake.direction
+        upcoming_position = self.snake.body[0] + direction
+
         if (
             upcoming_position.x < 0 or
             upcoming_position.x >= self.grid_size_x or
