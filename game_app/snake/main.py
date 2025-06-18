@@ -34,15 +34,15 @@ def main(root):
                 result = game.menu.handle_event(event)
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     if game.menu.type == MenuType.PAUSE:
-                        game.menu.disable()
+                        game.menu.disable_menu()
                 elif result == "quit":
                     running = False
                 elif result == "continue":
-                    game.menu.disable()
+                    game.menu.disable_menu()
                 elif result == "retry":
                     game = Game(screen, config)
                 elif result == "start":
-                    game.menu.disable()
+                    game.menu.disable_menu()
                 continue
 
             # These happen only if menu is NOT active

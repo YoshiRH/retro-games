@@ -4,7 +4,6 @@ from enum import Enum
 class InGameMenu:
     def __init__(self, screen, pos_left, pos_top, primary_color, secondary_color, highlight_color, hover_color):
         self.screen = screen
-        self.active = False
         sizes = {"big": 75, "medium": 55, "small": 30}
         self.fonts = {k: pygame.font.Font('media/snake/Jersey25-Regular.ttf', v) for k, v in sizes.items()}
         self.pos_left = pos_left
@@ -13,11 +12,14 @@ class InGameMenu:
         self.secondary_color = secondary_color
         self.highlight_color = highlight_color
         self.hover_color = hover_color
+
         self.left_button_rect = pygame.Rect(self.pos_left + 41, self.pos_top + 220, 200, 60)
         self.right_button_rect= pygame.Rect(self.pos_left + 281, self.pos_top + 220, 200, 60)
-        self.type = MenuType.NONE
 
-    def disable(self):
+        self.type = MenuType.NONE
+        self.active = False
+
+    def disable_menu(self):
         self.active = False
 
     def draw_current(self, current_score, best_score):
@@ -93,7 +95,7 @@ class InGameMenu:
                         MenuType.WIN: "retry",
                         MenuType.START: "start",
                         MenuType.NEW_RECORD: "retry"
-                    }.get(self.type)
+                    }[self.type]
                 if self.right_button_rect.collidepoint(event.pos):
                     return "quit"
         return None
