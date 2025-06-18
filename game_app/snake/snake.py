@@ -33,52 +33,55 @@ class Snake:
             self.direction_queue.append(new_dir)
 
     def draw(self, screen):
-        for index, coordinates in enumerate(self.body):
-            rectangle = pygame.Rect(
-                self.loc_x + (coordinates.x * self.element_size),
-                self.loc_y + (coordinates.y * self.element_size),
-                self.element_size, self.element_size
-            )
+        for index, segment in enumerate(self.body):
+            rect = self.get_rect_for_segment(segment)
 
-            sprite = None
             if index == 0:
-                sprite = self.rotate_head()
+                sprite = self.get_head_sprite()
             elif index == len(self.body) - 1:
-                sprite = self.rotate_tail()
+                sprite = self.get_tail_sprite()
             else:
-                previous_difference = self.body[index + 1] - self.body[index]
-                next_difference = self.body[index - 1] - self.body[index]
+                sprite = self.get_middle_sprite(index)
 
-                if previous_difference.x == next_difference.x:
-                    sprite = self.body_sprite
-                elif previous_difference.y == next_difference.y:
-                    sprite = pygame.transform.rotate(self.body_sprite, 90)
-                else:
-                    sprite = self.rotate_middle(previous_difference, next_difference)
+            screen.blit(sprite, rect) if sprite else pygame.draw.rect(screen, "#F8ED8C", rect)
 
-            if sprite:
-                screen.blit(sprite, rectangle)
-            else:
-                pygame.draw.rect(screen, "#F8ED8C", rectangle)
+    def get_rect_for_segment(self, segment):
+        return pygame.Rect(
+            self.loc_x + segment.x * self.element_size,
+            self.loc_y + segment.y * self.element_size,
+            self.element_size,
+            self.element_size)
 
-    def rotate_head(self):
-        rotation = self.body[1] - self.body[0]
-        base_sprite = self.head_sprite if self.alive else self.dead_sprite
-        return self.rotate_sprite(base_sprite, rotation)
+    def get_head_sprite(self):
+        direction = self.body[1] - self.body[0]
+        sprite = self.head_sprite if self.alive else self.dead_sprite
+        return self.rotate_sprite(sprite, direction)
 
-    def rotate_middle(self, prev, next_):
-        if (prev.x == 1 and next_.y == -1) or (prev.y == -1 and next_.x == 1):
+    def get_tail_sprite(self):
+        direction = self.body[-2] - self.body[-1]
+        return self.rotate_sprite(self.tail_sprite, direction)
+
+    def get_middle_sprite(self, index):
+        prev_dir = self.body[index + 1] - self.body[index]
+        next_dir = self.body[index - 1] - self.body[index]
+
+        # Straight pieces
+        if prev_dir.x == next_dir.x:
+            return self.body_sprite  # Vertical
+        elif prev_dir.y == next_dir.y:
+            return pygame.transform.rotate(self.body_sprite, 90)  # Horizontal
+
+        # Turns
+        if (prev_dir.x == 1 and next_dir.y == -1) or (prev_dir.y == -1 and next_dir.x == 1):
             return pygame.transform.rotate(self.turn_sprite, 0)
-        elif (prev.x == -1 and next_.y == -1) or (prev.y == -1 and next_.x == -1):
+        elif (prev_dir.x == -1 and next_dir.y == -1) or (prev_dir.y == -1 and next_dir.x == -1):
             return pygame.transform.rotate(self.turn_sprite, 90)
-        elif (prev.x == -1 and next_.y == 1) or (prev.y == 1 and next_.x == -1):
+        elif (prev_dir.x == -1 and next_dir.y == 1) or (prev_dir.y == 1 and next_dir.x == -1):
             return pygame.transform.rotate(self.turn_sprite, 180)
-        elif (prev.x == 1 and next_.y == 1) or (prev.y == 1 and next_.x == 1):
+        elif (prev_dir.x == 1 and next_dir.y == 1) or (prev_dir.y == 1 and next_dir.x == 1):
             return pygame.transform.rotate(self.turn_sprite, 270)
 
-    def rotate_tail(self):
-        rotation = self.body[-2] - self.body[-1]
-        return self.rotate_sprite(self.tail_sprite, rotation)
+        return None  # Fallback (shouldn't be reached)
 
     def rotate_sprite(self, sprite, direction):
         if direction == Vector2(0, 1): return sprite
