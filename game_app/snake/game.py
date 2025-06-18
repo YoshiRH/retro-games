@@ -49,11 +49,10 @@ class Game:
             self.snake.grow = True
             self.score += 1
             self.eat_sound.play()
+            if self.score >= (self.config.grid_size_x * self.config.grid_size_y - 5):
+                self.running = False
+                self.menu.enable_menu(MenuType.WIN)
             self.apple.reposition(self.snake)
-
-        if self.score >= (self.config.grid_size_x * self.config.grid_size_y - 5):
-            self.running = False
-            self.menu.enable_menu(MenuType.WIN)
 
     def check_self_collision(self):
         direction = self.snake.direction_queue[0] if self.snake.direction_queue else self.snake.direction
