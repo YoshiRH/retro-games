@@ -49,8 +49,7 @@ class Game:
         if self.apple.position == self.snake.body[0]:
             self.snake.grow = True
             self.score += 1
-            if self.score > self.best_score:
-                self.best_score = self.score
+
             self.eat_sound.play()
             if self.score >= (self.config.grid_size_x * self.config.grid_size_y - 5):
                 self.running = False
@@ -81,7 +80,12 @@ class Game:
         self.running = False
         self.hit_sound.play()
         self.save_best_score()
-        self.menu.enable_menu(MenuType.LOSS)
+        if self.score > self.best_score:
+            self.menu.enable_menu(MenuType.NEW_RECORD)
+            self.best_score = self.score
+            self.save_best_score()
+        else:
+            self.menu.enable_menu(MenuType.LOSS)
 
     def draw_score(self, screen):
         score_border = pygame.Rect(314, 14, 169, 84)

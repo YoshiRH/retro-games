@@ -28,23 +28,8 @@ def main(root):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.KEYDOWN:
-                match event.key:
-                    case pygame.K_ESCAPE:
-                        if not game.menu.active:
-                            game.menu.enable_menu(MenuType.PAUSE)
-                        else:
-                            game.menu.active = False
-                    case pygame.K_r:
-                        game = Game(screen, config)
-                    case pygame.K_w:
-                        game.snake.queue_direction(Vector2(0, -1))
-                    case pygame.K_s:
-                        game.snake.queue_direction(Vector2(0, 1))
-                    case pygame.K_a:
-                        game.snake.queue_direction(Vector2(-1, 0))
-                    case pygame.K_d:
-                        game.snake.queue_direction(Vector2(1, 0))
+
+            # If the menu is active, only handle menu events
             if game.menu.active:
                 result = game.menu.handle_event(event)
                 if result == "quit":
@@ -55,14 +40,33 @@ def main(root):
                     game = Game(screen, config)
                 elif result == "start":
                     game.menu.disable()
-            if event.type == SCREEN_UPDATE and not game.menu.active:
+                continue  # Skip rest of loop if menu is active
+
+            # These happen only if menu is NOT active
+            if event.type == pygame.KEYDOWN:
+                match event.key:
+                    case pygame.K_ESCAPE:
+                        game.menu.enable_menu(MenuType.PAUSE)
+                    case pygame.K_r:
+                        game = Game(screen, config)
+                    case pygame.K_w:
+                        game.snake.queue_direction(Vector2(0, -1))
+                    case pygame.K_s:
+                        game.snake.queue_direction(Vector2(0, 1))
+                    case pygame.K_a:
+                        game.snake.queue_direction(Vector2(-1, 0))
+                    case pygame.K_d:
+                        game.snake.queue_direction(Vector2(1, 0))
+
+            if event.type == SCREEN_UPDATE:
                 pygame.time.set_timer(SCREEN_UPDATE, game.get_game_speed())
                 game.update_logic()
+
         screen.fill("#89ac46")
         draw_game_board(screen, config)
         game.draw_objects(screen)
 
-        game.menu.draw_current(game.score)
+        game.menu.draw_current(game.score, game.best_score)
 
         pygame.display.update()
         clock.tick(60)

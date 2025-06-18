@@ -20,18 +20,21 @@ class InGameMenu:
     def disable(self):
         self.active = False
 
-    def draw_current(self, score):
+    def draw_current(self, current_score, best_score):
         if not self.active:
             return
 
         if self.type is MenuType.START:
-            self.draw_base("Collect Apples", "Use WASD keys to switch direction", "", "Start", "Leave")
+            row_2 = f"Best Score: {best_score}" if best_score > 0 else ""
+            self.draw_base("Collect Apples", "Use WASD keys to switch direction", row_2, "Start", "Leave")
         elif self.type is MenuType.PAUSE:
             self.draw_base("Game paused", "", "", "Continue", "Leave")
         elif self.type is MenuType.WIN:
             self.draw_base("You won!", f"All apples collected :)", "", "Retry", "Leave")
         elif self.type is MenuType.LOSS:
-            self.draw_base("You lost!", f"Final Score: {score}", "", "Retry", "Leave")
+            self.draw_base("You lost!", f"Final Score: {current_score}", f"Best Score: {best_score}", "Retry", "Leave")
+        elif self.type is MenuType.NEW_RECORD:
+            self.draw_base("New record!", f"Congratulations on getting a record!", f"The new best score is {current_score}", "Retry", "Leave")
 
     def enable_menu(self, menu_type):
         self.type = menu_type
@@ -82,13 +85,14 @@ class InGameMenu:
 
     def handle_event(self, event):
         if self.active and event.type == pygame.MOUSEBUTTONDOWN:
-            if self.type in [MenuType.PAUSE, MenuType.LOSS, MenuType.WIN, MenuType.START]:
+            if self.type in [MenuType.PAUSE, MenuType.LOSS, MenuType.WIN, MenuType.START, MenuType.NEW_RECORD]:
                 if self.left_button_rect.collidepoint(event.pos):
                     return {
                         MenuType.PAUSE: "continue",
                         MenuType.LOSS: "retry",
                         MenuType.WIN: "retry",
-                        MenuType.START: "start"
+                        MenuType.START: "start",
+                        MenuType.NEW_RECORD: "retry"
                     }.get(self.type)
                 if self.right_button_rect.collidepoint(event.pos):
                     return "quit"
@@ -100,3 +104,4 @@ class MenuType(Enum):
     PAUSE = 2
     WIN = 3
     LOSS = 4
+    NEW_RECORD = 5
