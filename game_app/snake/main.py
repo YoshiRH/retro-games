@@ -62,7 +62,7 @@ def main(root):
         draw_game_board(screen, config)
         game.draw_objects(screen)
 
-        game.menu.draw_current(len(game.snake.body) - 3)
+        game.menu.draw_current(game.score)
 
         pygame.display.update()
         clock.tick(60)

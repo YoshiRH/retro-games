@@ -25,11 +25,13 @@ class Game:
         self.grid_size_x = config.grid_size_x
         self.grid_size_y = config.grid_size_y
 
+        self.score = 0
+
     def update_logic(self):
         if self.running:
+            self.try_eating_apple()
             self.check_self_collision()
             self.check_border_collision()
-            self.try_eating_apple()
             if self.running:
                 try:
                     self.snake.move()
@@ -45,6 +47,7 @@ class Game:
     def try_eating_apple(self):
         if self.apple.position == self.snake.body[0]:
             self.snake.grow = True
+            self.score += 1
             self.eat_sound.play()
             self.apple.reposition(self.snake)
 
@@ -80,8 +83,7 @@ class Game:
     def draw_score(self, screen):
         score_border = pygame.Rect(314, 14, 169, 84)
         font = pygame.font.Font('media/snake/Jersey25-Regular.ttf', 95)
-        score = str(len(self.snake.body) - 3)
-        score_surface = font.render(score, True, '#d3e671')
+        score_surface = font.render(str(self.score), True, '#d3e671')
         score_rectangle = score_surface.get_rect(center=score_border.center)
 
         pygame.draw.rect(screen, "#4d6127", score_border)
