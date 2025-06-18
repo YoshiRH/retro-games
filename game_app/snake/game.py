@@ -51,7 +51,7 @@ class Game:
             self.eat_sound.play()
             self.apple.reposition(self.snake)
 
-        if len(self.snake.body) - 3 >= 245:
+        if self.score >= (self.config.grid_size_x * self.config.grid_size_y - 5):
             self.running = False
             self.menu.enable_menu(MenuType.WIN)
 
