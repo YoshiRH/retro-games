@@ -78,6 +78,7 @@ class Game:
 
     def fail(self):
         self.running = False
+        self.snake.alive = False
         self.hit_sound.play()
         self.save_best_score()
         if self.score > self.best_score:
