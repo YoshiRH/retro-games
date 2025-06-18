@@ -10,3 +10,6 @@ class GameConfig:
         self.secondary_color = "#4d6127"
         self.highlight_color = "#d3e671"
         self.hover_color = "#889a66"
+
+        self.score_display_loc_x = 314
+        self.score_display_loc_y = 14
