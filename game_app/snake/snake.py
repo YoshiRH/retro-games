@@ -4,28 +4,28 @@ from collections import deque
 
 class Snake:
     def __init__(self, element_size, loc_x, loc_y, grid_size_x, grid_size_y):
-        self.element_size = element_size
-        self.loc_x = loc_x
-        self.loc_y = loc_y
-        self.grid_size_x = grid_size_x
-        self.grid_size_y = grid_size_y
-
         self.body = [Vector2(5, 6), Vector2(4, 6), Vector2(3, 6)]
-        self.direction = Vector2(1, 0)
-        self.grow = False
-
-        self.body_sprite = pygame.image.load('media/snake/body.png').convert_alpha()
-        self.head_sprite = pygame.image.load('media/snake/head.png').convert_alpha()
-        self.tail_sprite = pygame.image.load('media/snake/tail.png').convert_alpha()
-        self.turn_sprite = pygame.image.load('media/snake/turn.png').convert_alpha()
-        self.dead_sprite = pygame.image.load('media/snake/dead.png').convert_alpha()
-
         self.direction_queue = deque()
         self.alive = True
 
+        self._element_size = element_size
+        self._loc_x = loc_x
+        self._loc_y = loc_y
+        self._grid_size_x = grid_size_x
+        self._grid_size_y = grid_size_y
+
+        self._direction = Vector2(1, 0)
+        self._grow = False
+
+        self._body_sprite = pygame.image.load('media/snake/body.png').convert_alpha()
+        self._head_sprite = pygame.image.load('media/snake/head.png').convert_alpha()
+        self._tail_sprite = pygame.image.load('media/snake/tail.png').convert_alpha()
+        self._turn_sprite = pygame.image.load('media/snake/turn.png').convert_alpha()
+        self._dead_sprite = pygame.image.load('media/snake/dead.png').convert_alpha()
+
     def queue_direction(self, new_dir):
         if len(self.direction_queue) == 0:
-            last_dir = self.direction
+            last_dir = self._direction
         else:
             last_dir = self.direction_queue[-1]
 
@@ -34,68 +34,68 @@ class Snake:
 
     def move(self):
         if self.direction_queue:
-            self.direction = self.direction_queue.popleft()
+            self._direction = self.direction_queue.popleft()
 
-        self.body.insert(0, self.body[0] + self.direction)
+        self.body.insert(0, self.body[0] + self._direction)
 
-        if self.grow:
-            self.grow = False
+        if self._grow:
+            self._grow = False
         else:
             self.body.pop()
 
     def draw(self, screen):
         for index, segment in enumerate(self.body):
-            rect = self.get_rect_for_segment(segment)
+            rect = self._get_rect_for_segment(segment)
 
             if index == 0:
-                sprite = self.get_head_sprite()
+                sprite = self._get_head_sprite()
             elif index == len(self.body) - 1:
-                sprite = self.get_tail_sprite()
+                sprite = self._get_tail_sprite()
             else:
-                sprite = self.get_middle_sprite(index)
+                sprite = self._get_middle_sprite(index)
 
             screen.blit(sprite, rect) if sprite else pygame.draw.rect(screen, "#F8ED8C", rect)
 
-    def get_rect_for_segment(self, segment):
+    def _get_rect_for_segment(self, segment):
         return pygame.Rect(
-            self.loc_x + segment.x * self.element_size,
-            self.loc_y + segment.y * self.element_size,
-            self.element_size,
-            self.element_size)
+            self._loc_x + segment.x * self._element_size,
+            self._loc_y + segment.y * self._element_size,
+            self._element_size,
+            self._element_size)
 
-    def get_head_sprite(self):
+    def _get_head_sprite(self):
         direction = self.body[1] - self.body[0]
-        sprite = self.head_sprite if self.alive else self.dead_sprite
-        return self.rotate_sprite(sprite, direction)
+        sprite = self._head_sprite if self.alive else self._dead_sprite
+        return self._rotate_sprite(sprite, direction)
 
-    def get_tail_sprite(self):
+    def _get_tail_sprite(self):
         direction = self.body[-2] - self.body[-1]
-        return self.rotate_sprite(self.tail_sprite, direction)
+        return self._rotate_sprite(self._tail_sprite, direction)
 
-    def get_middle_sprite(self, index):
+    def _get_middle_sprite(self, index):
         prev_dir = self.body[index + 1] - self.body[index]
         next_dir = self.body[index - 1] - self.body[index]
 
         # Straight pieces
         if prev_dir.x == next_dir.x:
-            return self.body_sprite  # Vertical
+            return self._body_sprite  # Vertical
         elif prev_dir.y == next_dir.y:
-            return pygame.transform.rotate(self.body_sprite, 90)  # Horizontal
+            return pygame.transform.rotate(self._body_sprite, 90)  # Horizontal
 
         # Turns
         if (prev_dir.x == 1 and next_dir.y == -1) or (prev_dir.y == -1 and next_dir.x == 1):
-            return pygame.transform.rotate(self.turn_sprite, 0)
+            return pygame.transform.rotate(self._turn_sprite, 0)
         elif (prev_dir.x == -1 and next_dir.y == -1) or (prev_dir.y == -1 and next_dir.x == -1):
-            return pygame.transform.rotate(self.turn_sprite, 90)
+            return pygame.transform.rotate(self._turn_sprite, 90)
         elif (prev_dir.x == -1 and next_dir.y == 1) or (prev_dir.y == 1 and next_dir.x == -1):
-            return pygame.transform.rotate(self.turn_sprite, 180)
+            return pygame.transform.rotate(self._turn_sprite, 180)
         elif (prev_dir.x == 1 and next_dir.y == 1) or (prev_dir.y == 1 and next_dir.x == 1):
-            return pygame.transform.rotate(self.turn_sprite, 270)
+            return pygame.transform.rotate(self._turn_sprite, 270)
 
         return None  # Fallback (shouldn't be reached)
 
     @staticmethod
-    def rotate_sprite(sprite, direction):
+    def _rotate_sprite(sprite, direction):
         if direction == Vector2(0, 1): return sprite
         elif direction == Vector2(1, 0): return pygame.transform.rotate(sprite, 90)
         elif direction == Vector2(0, -1): return pygame.transform.rotate(sprite, 180)
@@ -103,29 +103,30 @@ class Snake:
 
 class Apple:
     def __init__(self, element_size, grid_size_x, grid_size_y, loc_x, loc_y):
-        self.element_size = element_size
-        self.grid_size_x = grid_size_x
-        self.grid_size_y = grid_size_y
-        self.loc_x = loc_x
-        self.loc_y = loc_y
-        self.position = self.generate_random_position()
-        self.image = pygame.image.load('media/snake/apple.png').convert_alpha()
+        self.position = self._generate_random_position()
 
-    def draw(self, screen):
-        rectangle = pygame.Rect(
-            self.loc_x + (self.position.x * self.element_size),
-            self.loc_y + (self.position.y * self.element_size),
-            self.element_size, self.element_size
-        )
-        screen.blit(self.image, rectangle)
+        self._element_size = element_size
+        self._grid_size_x = grid_size_x
+        self._grid_size_y = grid_size_y
+        self._loc_x = loc_x
+        self._loc_y = loc_y
+        self._image = pygame.image.load('media/snake/apple.png').convert_alpha()
 
     def reposition(self, snake):
         while True:
-            self.position = self.generate_random_position()
+            self.position = self._generate_random_position()
             if self.position not in snake.body:
                 break
 
-    def generate_random_position(self):
+    def draw(self, screen):
+        rectangle = pygame.Rect(
+            self._loc_x + (self.position.x * self._element_size),
+            self._loc_y + (self.position.y * self._element_size),
+            self._element_size, self._element_size
+        )
+        screen.blit(self._image, rectangle)
+
+    def _generate_random_position(self):
         return Vector2(
-            random.randint(0, self.grid_size_x - 1),
-            random.randint(0, self.grid_size_y - 1))
+            random.randint(0, self._grid_size_x - 1),
+            random.randint(0, self._grid_size_y - 1))
