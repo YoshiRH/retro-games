@@ -90,22 +90,12 @@ class Snake:
         if self.direction_queue:
             self.direction = self.direction_queue.popleft()
 
-        new_head = self.body[0] + self.direction
-        self.body.insert(0, new_head)
+        self.body.insert(0, self.body[0] + self.direction)
 
-        check_body = self.body[1:] if self.grow else self.body[1:-1]
-        if new_head in check_body:
-            self.alive = False
-            raise Exception("self_collision")
-
-        if not (0 <= new_head.x < self.grid_size_x) or not (0 <= new_head.y < self.grid_size_y):
-            self.alive = False
-            raise Exception("border_collision")
-
-        if not self.grow:
-            self.body.pop()
-        else:
+        if self.grow:
             self.grow = False
+        else:
+            self.body.pop()
 
 class Apple:
     def __init__(self, element_size, grid_size_x, grid_size_y, loc_x, loc_y):

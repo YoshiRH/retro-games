@@ -34,11 +34,7 @@ class Game:
             self.check_self_collision()
             self.check_border_collision()
             if self.running:
-                try:
-                    self.snake.move()
-                except Exception as e:
-                    if str(e) in ["self_collision", "border_collision"]:
-                        self.fail()
+                self.snake.move()
 
     def draw_objects(self, screen):
         self.apple.draw(screen)
@@ -60,9 +56,11 @@ class Game:
         direction = self.snake.direction_queue[0] if self.snake.direction_queue else self.snake.direction
         upcoming_position = self.snake.body[0] + direction
 
-        for coordinates in self.snake.body[:-1]: #Not counting the tail to avoid unnecessary crashes
-            if upcoming_position == coordinates:
-                self.fail()
+        # If snake will grow, the tail won't be removed, so include it in the check
+        check_body = self.snake.body[1:] if self.snake.grow else self.snake.body[1:-1]
+
+        if upcoming_position in check_body:
+            self.fail()
 
     def check_border_collision(self):
         direction = self.snake.direction_queue[0] if self.snake.direction_queue else self.snake.direction
