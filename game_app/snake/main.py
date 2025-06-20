@@ -5,7 +5,33 @@ from .additional import draw_game_board
 from .game import Game
 from .game_config import GameConfig
 
+"""
+Main game loop and entry point for the Snake game embedded in a Tkinter window.
+
+This module initializes the Pygame environment, configures the screen, 
+runs the game loop, and handles user input and UI interaction with menus.
+
+Functions
+---------
+main(root):
+    Starts the game loop and embeds the Pygame window into the given Tkinter root.
+
+handle_game_input(key, game, config, screen):
+    Processes keyboard input for controlling the snake or restarting the game.
+"""
+
 def main(root):
+    """
+    Starts the Snake game loop and embeds it into a Tkinter window.
+
+    This function initializes Pygame and sets up the game screen, game logic, event loop,
+    menu handling, and drawing. It integrates with a Tkinter UI using SDL embedding.
+
+    Parameters
+    ----------
+    root : tkinter.Tk or tkinter.Frame
+    A Tkinter window or frame whose window ID is used to embed the Pygame surface.
+    """
     # Initialization
     pygame.mixer.pre_init(44100, -16, 2, 64)
     pygame.mixer.init()
@@ -69,6 +95,27 @@ def main(root):
     pygame.quit()
 
 def handle_game_input(key, game, config, screen):
+    """
+    Handles player input from the keyboard and updates the game accordingly.
+
+    This includes pausing, restarting, and queueing snake direction changes.
+
+    Parameters
+    ----------
+    key : int
+        The Pygame key constant (e.g., pygame.K_w).
+    game : Game
+        The current instance of the game.
+    config : GameConfig
+        Game configuration object with sizes and colors.
+    screen : pygame.Surface
+        The Pygame screen surface for the game.
+
+    Returns
+    -------
+    Game
+        Either the same game instance or a newly restarted one.
+    """
     match key:
         case pygame.K_ESCAPE:
             game.menu.enable_menu(MenuType.PAUSE)
