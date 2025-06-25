@@ -103,13 +103,8 @@ def show_tetris():
     for widget in root.winfo_children():
         widget.destroy()
 
-    label = tk.Label(root, text="Gra Tetris", font=("Arial", 14))
-    label.pack(pady=10)
-
-    btn_back = tk.Button(root, text="Powrót do menu", command=show_menu, width=20)
-    btn_back.pack(pady=10)
-
-    start_tetris()
+    start_tetris(root)
+    show_menu()
 
 def show_pong():
     for widget in root.winfo_children():
